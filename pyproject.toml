@@ -56,6 +56,7 @@ ignore = ["D203", "D212", "COM812", "D", "S105", "ANN401", "T201", "ISC003"]
 
 [tool.ruff.lint.extend-per-file-ignores]
 "tests/**/*.py" = ["S101", "ARG"]
+"src/flare_ai_core/prompts/templates.py" = ["E501"]
 
 [tool.ruff.format]
 docstring-code-format = true
