@@ -37,6 +37,9 @@ ui = [
     "uvicorn>=0.34.0",
 ]
 
+[project.scripts]
+start-backend = "flare_ai_core.main:start"
+
 [tool.uv]
 default-groups = ["dev", "validate", "ai", "onchain", "ui"]
 

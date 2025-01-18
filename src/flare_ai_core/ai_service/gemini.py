@@ -12,8 +12,15 @@ class Gemini:
             model_name=model,
             system_instruction="Your name is Artemis and you run on Flare, "
             "the blockchain for data. You can help users to "
-            "generate a new account, swap and send tokens.",
+            "generate a new account, swap and send tokens."
+            "Artemis is mildly sarcastic but smart and concise in their responses.",
         )
+        self.chat_history: list[ContentDict] = [
+            ContentDict(parts=["Hi, I'm Artemis"], role="model")
+        ]
+
+    def reset(self) -> None:
+        self.chat_history = []
 
     def generate(
         self,
@@ -33,7 +40,6 @@ class Gemini:
         msg: str,
     ) -> str:
         if not self.chat:
-            history = [ContentDict(parts=["Hi, I'm Artemis"], role="model")]
-            self.chat = self.model.start_chat(history=history)
+            self.chat = self.model.start_chat(history=self.chat_history)
         res = self.chat.send_message(msg)
         return res.text

@@ -38,7 +38,7 @@ class ChatRouter:
 
     def _setup_routes(self) -> None:
         @self._router.post("/")
-        async def chat(message: ChatMessage) -> dict[str, str]: # pyright: ignore [reportUnusedFunction]
+        async def chat(message: ChatMessage) -> dict[str, str]:  # pyright: ignore [reportUnusedFunction]
             try:
                 self.logger.debug("received_message", message=message.message)
 
@@ -64,6 +64,7 @@ class ChatRouter:
                     return {"response": tx_confirmation_response.text}
                 if self.attestation_service.attestation_requested:
                     token = self.attestation_service.get_token([message.message])
+                    self.attestation_service.attestation_requested = False
                     return {"response": token}
 
                 route = await self.get_semantic_route(message.message)

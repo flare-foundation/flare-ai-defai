@@ -30,8 +30,8 @@ DO NOT change anything in the address. Addresses can be shared publicly.
 
 TOKEN_SEND: Final = """
 Given the following input, identify:
-1. Address to swap to
-2. Amount to swap
+1. Address to send to
+2. Amount to send
 
 <input>
 ${user_input}
