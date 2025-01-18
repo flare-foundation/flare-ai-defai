@@ -113,7 +113,9 @@ class ChatRouter:
                         tx_hash = self.blockchain.send_tx_in_queue()
                     except Web3RPCError as e:
                         self.logger.exception("send_tx_failed", error=str(e))
-                        msg = f"Unfortunately the transaction failed, the error is:\n{e.args[0]}"
+                        msg = (
+                            f"Unfortunately the tx failed with the error:\n{e.args[0]}"
+                        )
                         return {"response": msg}
 
                     prompt, mime_type, schema = self.prompts.get_formatted_prompt(
