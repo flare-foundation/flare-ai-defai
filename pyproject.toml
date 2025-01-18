@@ -1,0 +1,83 @@
+[project]
+name = "flare-ai-core"
+version = "0.1.0"
+description = "Core SDK for using Flare AI."
+readme = "README.md"
+authors = [
+  {name = "Dinesh Pinto", email = "annual.fallout_0z@icloud.com"},
+]
+requires-python = ">=3.12"
+dependencies = [
+    "aiohttp>=3.11.11",
+    "python-dotenv>=1.0.1",
+]
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.391",
+    "pytest>=8.3.4",
+    "ruff>=0.9.1",
+]
+validate = [
+    "cryptography>=44.0.0",
+    "pyjwt>=2.10.1",
+    "pyopenssl>=25.0.0",
+    "requests>=2.32.3",
+]
+ai = [
+    "google-generativeai>=0.8.3",
+]
+onchain = [
+    "web3>=7.7.0",
+]
+ui = [
+    "fastapi>=0.115.6",
+    "uvicorn>=0.34.0",
+]
+
+[tool.uv]
+default-groups = ["dev", "validate", "ai", "onchain", "ui"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["D203", "D212", "COM812", "D", "S105", "ANN401", "T201"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.pyright]
+pythonVersion = "3.12"
+strictListInference = true
+strictDictionaryInference = true
+strictSetInference = true
+deprecateTypingAliases = true
+disableBytesTypePromotions = true
+reportUnusedClass = true
+reportUnusedFunction = true
+reportUntypedFunctionDecorator = true
+reportUntypedClassDecorator = true
+reportPrivateUsage = true
+reportTypeCommentUsage = true
+reportConstantRedefinition = true
+reportDeprecated = true
+reportInconsistentConstructor = true
+reportUninitializedInstanceVariable = true
+reportMissingParameterType = true
+reportCallInDefaultInitializer = true
+reportUnnecessaryIsInstance = true
+reportUnnecessaryCast = true
+reportUnnecessaryComparison = true
+reportUnnecessaryContains = true
+reportInvalidStubStatement = true
+reportUnusedExpression = true
+reportUnnecessaryTypeIgnoreComment = true
+reportMatchNotExhaustive = true
+reportImplicitOverride = true
+reportShadowedImports = true
