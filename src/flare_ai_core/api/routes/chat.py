@@ -5,10 +5,10 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 from web3 import Web3
 
-from flare_ai_core.ai_service import Gemini
-from flare_ai_core.attestation_service import Vtpm
-from flare_ai_core.blockchain_service import Flare
-from flare_ai_core.prompt_service import PromptService, SemanticRouterResponse
+from flare_ai_core.ai import GeminiProvider
+from flare_ai_core.attestation import Vtpm
+from flare_ai_core.blockchain import FlareProvider
+from flare_ai_core.prompts import PromptService, SemanticRouterResponse
 from flare_ai_core.settings import settings
 
 logger = structlog.get_logger(__name__)
@@ -22,17 +22,17 @@ class ChatMessage(BaseModel):
 class ChatRouter:
     def __init__(
         self,
-        ai_service: Gemini,
-        blockchain_service: Flare,
-        attestation_service: Vtpm,
-        prompt_service: PromptService,
+        ai: GeminiProvider,
+        blockchain: FlareProvider,
+        attestation: Vtpm,
+        prompts: PromptService,
     ) -> None:
         self._router = APIRouter()
 
-        self.ai_service = ai_service
-        self.blockchain_service = blockchain_service
-        self.attestation_service = attestation_service
-        self.prompt_service = prompt_service
+        self.ai = ai
+        self.blockchain = blockchain
+        self.attestation = attestation
+        self.prompts = prompts
         self.logger = logger.bind(router="chat")
         self._setup_routes()
 
@@ -45,26 +45,24 @@ class ChatRouter:
                 if message.message.startswith("/"):
                     return await self.handle_command(message.message)
                 if (
-                    self.blockchain_service.tx_queue
-                    and message.message == self.blockchain_service.tx_queue[-1].msg
+                    self.blockchain.tx_queue
+                    and message.message == self.blockchain.tx_queue[-1].msg
                 ):
-                    tx_hash = self.blockchain_service.send_tx_in_queue()
-                    prompt, mime_type, schema = (
-                        self.prompt_service.get_formatted_prompt(
-                            "tx_confirmation",
-                            tx_hash=tx_hash,
-                            block_explorer=settings.web3_explorer_url,
-                        )
+                    tx_hash = self.blockchain.send_tx_in_queue()
+                    prompt, mime_type, schema = self.prompts.get_formatted_prompt(
+                        "tx_confirmation",
+                        tx_hash=tx_hash,
+                        block_explorer=settings.web3_explorer_url,
                     )
-                    tx_confirmation_response = self.ai_service.generate(
+                    tx_confirmation_response = self.ai.generate(
                         prompt=prompt,
                         response_mime_type=mime_type,
                         response_schema=schema,
                     )
                     return {"response": tx_confirmation_response.text}
-                if self.attestation_service.attestation_requested:
-                    token = self.attestation_service.get_token([message.message])
-                    self.attestation_service.attestation_requested = False
+                if self.attestation.attestation_requested:
+                    token = self.attestation.get_token([message.message])
+                    self.attestation.attestation_requested = False
                     return {"response": token}
 
                 route = await self.get_semantic_route(message.message)
@@ -81,17 +79,18 @@ class ChatRouter:
 
     async def handle_command(self, command: str) -> dict[str, str]:
         if command == "/reset":
-            self.blockchain_service.reset()
+            self.blockchain.reset()
+            self.ai.reset()
             # Implement reset logic
-            return {"response": "Reset completed"}
+            return {"response": "Reset complete"}
         return {"response": "Unknown command"}
 
     async def get_semantic_route(self, message: str) -> SemanticRouterResponse:
         try:
-            prompt, mime_type, schema = self.prompt_service.get_formatted_prompt(
+            prompt, mime_type, schema = self.prompts.get_formatted_prompt(
                 "semantic_router", user_input=message
             )
-            route_response = self.ai_service.generate(
+            route_response = self.ai.generate(
                 prompt=prompt, response_mime_type=mime_type, response_schema=schema
             )
             return SemanticRouterResponse(route_response.text)
@@ -117,25 +116,25 @@ class ChatRouter:
         return await handler(message)
 
     async def handle_generate_account(self, _: str) -> dict[str, str]:
-        if self.blockchain_service.address:
-            return {"response": f"Account exists - {self.blockchain_service.address}"}
-        address = self.blockchain_service.generate_account()
-        prompt, mime_type, schema = self.prompt_service.get_formatted_prompt(
+        if self.blockchain.address:
+            return {"response": f"Account exists - {self.blockchain.address}"}
+        address = self.blockchain.generate_account()
+        prompt, mime_type, schema = self.prompts.get_formatted_prompt(
             "generate_account", address=address
         )
-        gen_address_response = self.ai_service.generate(
+        gen_address_response = self.ai.generate(
             prompt=prompt, response_mime_type=mime_type, response_schema=schema
         )
         return {"response": gen_address_response.text}
 
     async def handle_send_token(self, message: str) -> dict[str, str]:
-        if not self.blockchain_service.address:
+        if not self.blockchain.address:
             await self.handle_generate_account(message)
 
-        prompt, mime_type, schema = self.prompt_service.get_formatted_prompt(
+        prompt, mime_type, schema = self.prompts.get_formatted_prompt(
             "token_send", user_input=message
         )
-        send_token_response = self.ai_service.generate(
+        send_token_response = self.ai.generate(
             prompt=prompt, response_mime_type=mime_type, response_schema=schema
         )
         send_token_json = json.loads(send_token_response.text)
@@ -144,18 +143,16 @@ class ChatRouter:
             len(send_token_json) != expected_json_len
             or send_token_json.get("amount") == 0.0
         ):
-            prompt, _, _ = self.prompt_service.get_formatted_prompt(
-                "follow_up_token_send"
-            )
-            follow_up_response = self.ai_service.generate(prompt)
+            prompt, _, _ = self.prompts.get_formatted_prompt("follow_up_token_send")
+            follow_up_response = self.ai.generate(prompt)
             return {"response": follow_up_response.text}
 
-        tx = self.blockchain_service.create_send_flr_tx(
+        tx = self.blockchain.create_send_flr_tx(
             to_address=send_token_json.get("to_address"),
             amount=send_token_json.get("amount"),
         )
         self.logger.debug("send_token_tx", tx=tx)
-        self.blockchain_service.add_tx_to_queue(msg=message, tx=tx)
+        self.blockchain.add_tx_to_queue(msg=message, tx=tx)
         formatted_preview = (
             "Transaction Preview: "
             + f"Sending {Web3.from_wei(tx.get('value', 0), 'ether')} "
@@ -167,11 +164,11 @@ class ChatRouter:
         return {"response": "Sorry I can't do that right now"}
 
     async def handle_attestation(self, _: str) -> dict[str, str]:
-        prompt = self.prompt_service.get_formatted_prompt("request_attestation")[0]
-        request_attestation_response = self.ai_service.generate(prompt=prompt)
-        self.attestation_service.attestation_requested = True
+        prompt = self.prompts.get_formatted_prompt("request_attestation")[0]
+        request_attestation_response = self.ai.generate(prompt=prompt)
+        self.attestation.attestation_requested = True
         return {"response": request_attestation_response.text}
 
     async def handle_conversation(self, message: str) -> dict[str, str]:
-        response = self.ai_service.generate(message)
+        response = self.ai.send_message(message)
         return {"response": response.text}

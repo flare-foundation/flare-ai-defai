@@ -2,7 +2,7 @@ from typing import Any
 
 import structlog
 
-from flare_ai_core.prompt_service.library import PromptLibrary
+from flare_ai_core.prompts.library import PromptLibrary
 
 logger = structlog.get_logger(__name__)
 

@@ -1,12 +1,12 @@
 import structlog
 
-from flare_ai_core.prompt_service.schemas import (
+from flare_ai_core.prompts.schemas import (
     Prompt,
     SemanticRouterResponse,
     TokenSendResponse,
     TokenSwapResponse,
 )
-from flare_ai_core.prompt_service.templates import (
+from flare_ai_core.prompts.templates import (
     CONVERSATIONAL,
     GENERATE_ACCOUNT,
     REMOTE_ATTESTATION,

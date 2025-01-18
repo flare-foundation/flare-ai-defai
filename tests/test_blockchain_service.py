@@ -1,7 +1,7 @@
-from flare_ai_core.blockchain_service import Flare
+from flare_ai_core.blockchain import FlareProvider
 
 
 def test_generate_account() -> None:
-    service = Flare("http://localhost:8545")
+    service = FlareProvider("http://localhost:8545")
     address = service.generate_account()
     assert address.startswith("0x")

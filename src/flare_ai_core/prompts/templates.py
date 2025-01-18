@@ -80,7 +80,7 @@ Send them a message showing that you are happy for them.
 
 The message must clearly contain the following transaction hash:
 
-${block_explorer}/tx/${tx_hash}
+[See transaction on Explorer](${block_explorer}/tx/${tx_hash})
 
-DO NOT change anything in the tx_hash.
+DO NOT change anything in the link.
 """

@@ -1,6 +1,6 @@
-import logging
 from dataclasses import dataclass
 
+import structlog
 from eth_account import Account
 from eth_typing import ChecksumAddress
 from web3 import Web3
@@ -13,30 +13,32 @@ class TxQueueElement:
     tx: TxParams
 
 
-logger = logging.getLogger()
+logger = structlog.get_logger(__name__)
 
 
-class Flare:
+class FlareProvider:
     def __init__(self, web3_provider_url: str) -> None:
         self.address: ChecksumAddress | None = None
         self.private_key: str | None = None
         self.tx_queue: list[TxQueueElement] = []
         self.w3 = Web3(Web3.HTTPProvider(web3_provider_url))
+        self.logger = logger.bind(router="flare_provider")
 
-    def reset(self) -> str:
+    def reset(self) -> None:
         self.address = None
         self.private_key = None
         self.tx_queue = []
-        return "Reset account history"
+        self.logger.debug("reset", address=self.address, tx_queue=self.tx_queue)
 
     def add_tx_to_queue(self, msg: str, tx: TxParams) -> None:
         tx_queue_element = TxQueueElement(msg=msg, tx=tx)
         self.tx_queue.append(tx_queue_element)
-        logger.debug("Added tx to queue: %s", self.tx_queue)
+        self.logger.debug("add_tx_to_queue", tx_queue=self.tx_queue)
 
     def send_tx_in_queue(self) -> str:
         if self.tx_queue:
             tx_hash = self.sign_and_send_transaction(self.tx_queue[-1].tx)
+            self.logger.debug("sent_tx_hash", tx_hash=tx_hash)
             self.tx_queue.pop()
             return tx_hash
         msg = "Unable to find confirmed tx"
@@ -46,6 +48,9 @@ class Flare:
         account = Account.create()
         self.private_key = account.key.hex()
         self.address = self.w3.to_checksum_address(account.address)
+        self.logger.debug(
+            "generate_account", address=self.address, private_key=self.private_key
+        )
         return self.address
 
     def sign_and_send_transaction(self, tx: TxParams) -> str:
@@ -58,6 +63,7 @@ class Flare:
         )
         tx_hash = self.w3.eth.send_raw_transaction(signed_tx.raw_transaction)
         self.w3.eth.wait_for_transaction_receipt(tx_hash)
+        self.logger.debug("sign_and_send_transaction", tx=tx)
         return "0x" + tx_hash.hex()
 
     def check_balance(self) -> float:
@@ -65,6 +71,7 @@ class Flare:
             msg = "Account does not exist"
             raise ValueError(msg)
         balance_wei = self.w3.eth.get_balance(self.address)
+        self.logger.debug("check_balance", balance_wei=balance_wei)
         return float(self.w3.from_wei(balance_wei, "ether"))
 
     def create_send_flr_tx(self, to_address: str, amount: float) -> TxParams:

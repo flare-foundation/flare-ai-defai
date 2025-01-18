@@ -11,13 +11,14 @@ Classes:
 """
 
 import json
-import logging
 import socket
 from http.client import HTTPConnection
 from pathlib import Path
 from typing import override
 
-logger = logging.getLogger(__name__)
+import structlog
+
+logger = structlog.get_logger(__name__)
 
 
 def get_simulated_token() -> str:
@@ -72,6 +73,8 @@ class Vtpm(HTTPConnection):
         self.unix_socket_path = unix_socket_path
         self.simulate = simulate
         self.attestation_requested: bool = False
+        self.logger = logger.bind(router="vtpm")
+        self.logger.debug("simulate_mode", simulate=simulate)
 
     @override
     def connect(self) -> None:
@@ -88,6 +91,7 @@ class Vtpm(HTTPConnection):
             return
         self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         self.sock.connect(self.unix_socket_path)
+        self.logger.debug("connect_socket", unix_socket_path=self.unix_socket_path)
 
     def _post(self, endpoint: str, body: str, headers: dict[str, str]) -> bytes:
         """
@@ -104,6 +108,7 @@ class Vtpm(HTTPConnection):
         Raises:
             VtpmAttestationError: If request fails or response status is not 200
         """
+        self.logger.debug("post", body=body)
         self.request("POST", endpoint, body=body, headers=headers)
         res = self.getresponse()
         success_status = 200
@@ -112,8 +117,7 @@ class Vtpm(HTTPConnection):
             raise VtpmAttestationError(msg)
         return res.read()
 
-    @staticmethod
-    def _check_nonce_length(nonces: list[str]) -> None:
+    def _check_nonce_length(self, nonces: list[str]) -> None:
         """
         Validate the byte length of provided nonces.
 
@@ -129,6 +133,7 @@ class Vtpm(HTTPConnection):
         max_byte_len = 74
         for nonce in nonces:
             byte_len = len(nonce.encode("utf-8"))
+            self.logger.debug("nonce_length", byte_len=byte_len)
             if byte_len < min_byte_len or byte_len > max_byte_len:
                 msg = f"Nonce '{nonce}' must be between {min_byte_len} bytes"
                 f" and {max_byte_len} bytes"
@@ -169,6 +174,7 @@ class Vtpm(HTTPConnection):
         """
         self._check_nonce_length(nonces)
         if self.simulate:
+            self.logger.debug("sim_token")
             return SIM_TOKEN
 
         headers = {"Content-Type": "application/json"}
@@ -177,5 +183,5 @@ class Vtpm(HTTPConnection):
         )
         token_bytes = self._post("/v1/token", body=body, headers=headers)
         token = token_bytes.decode()
-        logger.info("%s token: %s", token_type, token)
+        self.logger.debug("token", token_type=token_type, token=token)
         return token

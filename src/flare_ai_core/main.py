@@ -2,7 +2,7 @@ import structlog
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from flare_ai_core import ChatRouter, Flare, Gemini, PromptService, Vtpm
+from flare_ai_core import ChatRouter, FlareProvider, GeminiProvider, PromptService, Vtpm
 from flare_ai_core.settings import settings
 
 logger = structlog.get_logger(__name__)
@@ -22,14 +22,14 @@ def create_app() -> FastAPI:
 
     # Initialize router
     chat = ChatRouter(
-        ai_service=Gemini(api_key=settings.gemini_api_key, model=settings.gemini_model),
-        blockchain_service=Flare(web3_provider_url=settings.web3_provider_url),
-        attestation_service=Vtpm(simulate=settings.simulate_attestation),
-        prompt_service=PromptService(),
+        ai=GeminiProvider(api_key=settings.gemini_api_key, model=settings.gemini_model),
+        blockchain=FlareProvider(web3_provider_url=settings.web3_provider_url),
+        attestation=Vtpm(simulate=settings.simulate_attestation),
+        prompts=PromptService(),
     )
 
     # Register routes
-    app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
+    app.include_router(chat.router, prefix="/api/routes/chat", tags=["chat"])
 
     return app
 

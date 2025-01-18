@@ -1,10 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Send } from 'lucide-react';
-import './index.css'
+import ReactMarkdown from 'react-markdown';
+import './index.css';
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState([
-    { text: "Hi, I'm Artemis! I can help you with Web3 operations like generating accounts, sending tokens, and token swaps. What would you like to do?", type: 'bot' }
+    { 
+      text: "Hi, I'm Artemis! 👋 I'm your Copilot for Flare, ready to help you with operations like generating wallets, sending tokens, and executing token swaps. \n\n⚠️ While I aim to be accurate, never risk funds you can't afford to lose.",
+      type: 'bot' 
+    }
   ]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +26,7 @@ const ChatInterface = () => {
 
   const handleSendMessage = async (text) => {
     try {
-      const response = await fetch('http://localhost:8000/api/chat', {
+      const response = await fetch('http://localhost:8000/api/routes/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -80,13 +84,31 @@ const ChatInterface = () => {
     setIsLoading(false);
   };
 
+  // Custom components for ReactMarkdown
+  const MarkdownComponents = {
+    // Override paragraph to remove default margins
+    p: ({ children }) => <span className="inline">{children}</span>,
+    // Style code blocks
+    code: ({ node, inline, className, children, ...props }) => (
+      inline ? 
+        <code className="bg-gray-200 rounded px-1 py-0.5 text-sm">{children}</code> :
+        <pre className="bg-gray-200 rounded p-2 my-2 overflow-x-auto">
+          <code {...props} className="text-sm">{children}</code>
+        </pre>
+    ),
+    // Style links
+    a: ({ node, children, ...props }) => (
+      <a {...props} className="text-pink-600 hover:underline">{children}</a>
+    )
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       <div className="flex flex-col h-full max-w-4xl mx-auto w-full shadow-lg bg-white">
         {/* Header */}
-        <div className="bg-blue-600 text-white p-4">
+        <div className="bg-pink-600 text-white p-4">
           <h1 className="text-xl font-bold">Artemis</h1>
-          <p className="text-sm opacity-80">AI Agent in TEE (flare-ai-core v0.0.1)</p>
+          <p className="text-sm opacity-80">Copilot for Flare (flare-ai-core v0.0.1)</p>
         </div>
 
         {/* Messages container */}
@@ -97,18 +119,23 @@ const ChatInterface = () => {
               className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {message.type === 'bot' && (
-                <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold mr-2">
+                <div className="w-8 h-8 rounded-full bg-pink-600 flex items-center justify-center text-white font-bold mr-2">
                   A
                 </div>
               )}
               <div
                 className={`max-w-xs px-4 py-2 rounded-xl ${
                   message.type === 'user'
-                    ? 'bg-blue-600 text-white rounded-br-none'
+                    ? 'bg-pink-600 text-white rounded-br-none'
                     : 'bg-gray-100 text-gray-800 rounded-bl-none'
                 }`}
               >
-                <p className="text-sm break-words whitespace-pre-wrap">{message.text}</p>
+                <ReactMarkdown 
+                  components={MarkdownComponents}
+                  className="text-sm break-words whitespace-pre-wrap"
+                >
+                  {message.text}
+                </ReactMarkdown>
               </div>
               {message.type === 'user' && (
                 <div className="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-white font-bold ml-2">
@@ -119,7 +146,7 @@ const ChatInterface = () => {
           ))}
           {isLoading && (
             <div className="flex justify-start">
-              <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold mr-2">
+              <div className="w-8 h-8 rounded-full bg-pink-600 flex items-center justify-center text-white font-bold mr-2">
                 A
               </div>
               <div className="bg-gray-100 text-gray-800 px-4 py-2 rounded-xl rounded-bl-none">
@@ -141,14 +168,14 @@ const ChatInterface = () => {
               type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder={awaitingConfirmation ? "Type CONFIRM to proceed or anything else to cancel" : "Type your message..."}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder={awaitingConfirmation ? "Type CONFIRM to proceed or anything else to cancel" : "Type your message... (Markdown supported)"}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
               disabled={isLoading}
             />
             <button
               type="submit"
               disabled={isLoading}
-              className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+              className="bg-pink-600 text-white p-2 rounded-full hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 disabled:opacity-50"
             >
               <Send className="w-5 h-5" />
             </button>
