@@ -10,16 +10,37 @@ jobs:
   lint:
     runs-on: "ubuntu-latest"
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4 # Pin to specific version
+
+      # Set up Python environment
       - name: Set up uv
-        uses: astral-sh/setup-uv@v3
+        uses: astral-sh/setup-uv@v3 # Pin to specific version
         with:
           version: "latest"
+
+      # Cache dependencies
+      - name: Cache dependencies
+        uses: actions/cache@v3 # Pin to specific version
+        with:
+          path: ~/.uv/cache
+          key: ${{ runner.os }}-uv-${{ matrix.python-version }}-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-uv-${{ matrix.python-version }}-
+
+      # Install dependencies
       - name: Install dependencies
         run: uv sync --frozen --all-extras
+
+      # Format code with ruff
       - name: Format with ruff
         run: uv run ruff format --diff
+
+      # Lint code with ruff
       - name: Lint with ruff
         run: uv run ruff check --diff
+        continue-on-error: false # Fail if issues are found
+
+      # Type check with pyright
       - name: Type check with pyright
         run: uv run pyright
