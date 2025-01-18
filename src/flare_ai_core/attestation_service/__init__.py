@@ -1,6 +1,5 @@
 from .vtpm_attestation import (
-    AsyncVtpmAttestation,
-    VtpmAttestation,
+    Vtpm,
     VtpmAttestationError,
 )
 from .vtpm_validation import (
@@ -12,11 +11,10 @@ from .vtpm_validation import (
 )
 
 __all__ = [
-    "AsyncVtpmAttestation",
     "CertificateParsingError",
     "InvalidCertificateChainError",
     "SignatureValidationError",
-    "VtpmAttestation",
+    "Vtpm",
     "VtpmAttestationError",
     "VtpmValidation",
     "VtpmValidationError",

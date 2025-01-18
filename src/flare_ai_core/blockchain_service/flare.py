@@ -6,8 +6,6 @@ from eth_typing import ChecksumAddress
 from web3 import Web3
 from web3.types import TxParams
 
-from flare_ai_core.onchain.config import config
-
 
 @dataclass
 class TxQueueElement:
@@ -18,12 +16,12 @@ class TxQueueElement:
 logger = logging.getLogger()
 
 
-class AgentAccount:
-    def __init__(self) -> None:
+class Flare:
+    def __init__(self, web3_provider_url: str) -> None:
         self.address: ChecksumAddress | None = None
         self.private_key: str | None = None
         self.tx_queue: list[TxQueueElement] = []
-        self.w3 = Web3(Web3.HTTPProvider(config.rpc_url))
+        self.w3 = Web3(Web3.HTTPProvider(web3_provider_url))
 
     def reset(self) -> str:
         self.address = None
@@ -36,8 +34,8 @@ class AgentAccount:
         self.tx_queue.append(tx_queue_element)
         logger.debug("Added tx to queue: %s", self.tx_queue)
 
-    def send_confirmed_tx_and_pop_queue(self, msg: str) -> str:
-        if self.tx_queue and msg == self.tx_queue[-1].msg:
+    def send_tx_in_queue(self) -> str:
+        if self.tx_queue:
             tx_hash = self.sign_and_send_transaction(self.tx_queue[-1].tx)
             self.tx_queue.pop()
             return tx_hash
