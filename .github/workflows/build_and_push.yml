@@ -2,6 +2,7 @@ name: Build and Push
 
 on:
   push:
+    # tags: ["v*.*.*"] # Match semantic versioning tags like v1.0.0
     branches: ["main"]
   workflow_dispatch: # Allow manual triggering of the workflow
 
@@ -54,12 +55,5 @@ jobs:
           context: .
           push: true
           load: true
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-
-      # Notify on success
-      - name: Notify success
-        if: ${{ success() }}
-        run: echo "Build and push succeeded for tag ${{ github.ref_name }}"
