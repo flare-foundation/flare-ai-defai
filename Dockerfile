@@ -125,5 +125,8 @@ EXPOSE 3000 8000
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:3000/ || exit 1
 
+# Allow workload operator to override environment variables
+LABEL "tee.launch_policy.allow_env_override"="gemini_api_key,gemini_model,web3_provider_url,web3_explorer_url,simulate_attestation"
+
 # Start supervisor
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
