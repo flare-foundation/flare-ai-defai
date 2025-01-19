@@ -9,7 +9,10 @@ The settings can be overridden by environment variables or through a .env file.
 Environment variables take precedence over values defined in the .env file.
 """
 
+import structlog
 from pydantic_settings import BaseSettings
+
+logger = structlog.get_logger(__name__)
 
 
 class Settings(BaseSettings):
@@ -79,3 +82,4 @@ class Settings(BaseSettings):
 
 # Create a global settings instance
 settings = Settings()
+logger.debug("settings", settings=settings.model_dump())
