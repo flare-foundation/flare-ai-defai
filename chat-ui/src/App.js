@@ -108,7 +108,7 @@ const ChatInterface = () => {
         {/* Header */}
         <div className="bg-pink-600 text-white p-4">
           <h1 className="text-xl font-bold">Artemis</h1>
-          <p className="text-sm opacity-80">Copilot for Flare (flare-ai-core v0.0.1)</p>
+          <p className="text-sm opacity-80">Copilot for Flare (flare-ai-core v0.1.0)</p>
         </div>
 
         {/* Messages container */}
