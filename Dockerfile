@@ -31,6 +31,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     supervisor \
     nginx \
+    ca-certificates \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
@@ -47,7 +48,7 @@ COPY --from=frontend-builder /app/frontend/build /usr/share/nginx/html
 # Configure nginx with security headers
 RUN echo '\
     server { \n\
-    listen 3000; \n\
+    listen 80; \n\
     server_tokens off; \n\
     \n\
     # Security headers \n\
@@ -67,7 +68,7 @@ RUN echo '\
     } \n\
     \n\
     location /api { \n\
-    proxy_pass http://localhost:8000; \n\
+    proxy_pass http://0.0.0.0:8000; \n\
     proxy_set_header Host $host; \n\
     proxy_set_header X-Real-IP $remote_addr; \n\
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; \n\

@@ -57,7 +57,7 @@ class Settings(BaseSettings):
     """
 
     simulate_attestation: bool = False
-    cors_origins: list[str] = ["http://localhost:3000"]
+    cors_origins: list[str] = ["*"]
     gemini_api_key: str = ""
     gemini_model: str = "gemini-1.5-flash"
     api_version: str = "v1"
