@@ -48,7 +48,7 @@ Generate a welcoming message that includes ALL of these elements in order:
    - Private keys never leave the secure enclave
    - Hardware-level protection against tampering
 3. Account address display:
-   - EXACTLY as provided: ${address}
+   - EXACTLY as provided, make no changes: ${address}
    - Format with clear visual separation
 
 Important rules:
