@@ -10,7 +10,8 @@ COPY --from=builder /flare-ai-core /app
 WORKDIR /app
 
 # Allow workload operator to override environment variables
-LABEL "tee.launch_policy.allow_env_override"="gemini_api_key,gemini_model,web3_provider_url,web3_explorer_url,simulate_attestation"
+LABEL "tee.launch_policy.allow_env_override"="GEMINI_API_KEY,GEMINI_MODEL,WEB3_PROVIDER_URL,WEB3_EXPLORER_URL,SIMULATE_ATTESTATION"
+LABEL "tee.launch_policy.log_redirect"="always"
 
 EXPOSE 8000
 

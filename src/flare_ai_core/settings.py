@@ -10,7 +10,7 @@ Environment variables take precedence over values defined in the .env file.
 """
 
 import structlog
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 logger = structlog.get_logger(__name__)
 
@@ -64,20 +64,14 @@ class Settings(BaseSettings):
     web3_provider_url: str = "https://coston2-api.flare.network/ext/C/rpc"
     web3_explorer_url: str = "https://coston2-explorer.flare.network/"
 
-    class Config:
-        """
-        Pydantic configuration class for settings behavior.
-
-        Attributes:
-            env_file (str): Path to the .env file for loading environment variables.
-                Defaults to ".env" in the current directory.
-
-            env_file_encoding (str): Encoding used for reading the .env file.
-                Defaults to "utf-8".
-        """
-
-        env_file = ".env"
-        env_file_encoding = "utf-8"
+    model_config = SettingsConfigDict(
+        # This enables .env file support
+        env_file=".env",
+        # If .env file is not found, don't raise an error
+        env_file_encoding="utf-8",
+        # Optional: you can also specify multiple .env files
+        extra="ignore",
+    )
 
 
 # Create a global settings instance
