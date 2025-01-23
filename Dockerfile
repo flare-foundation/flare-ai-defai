@@ -53,7 +53,7 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN mkdir -p /var/log/supervisor
 
 # Expose ports
-EXPOSE 3000 8000
+EXPOSE 80 8001
 
 # Allow workload operator to override environment variables
 LABEL "tee.launch_policy.allow_env_override"="GEMINI_API_KEY,GEMINI_MODEL,WEB3_PROVIDER_URL,WEB3_EXPLORER_URL,SIMULATE_ATTESTATION,REACT_APP_API_URL"
