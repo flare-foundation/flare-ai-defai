@@ -26,9 +26,7 @@ const ChatInterface = () => {
 
   const handleSendMessage = async (text) => {
     try {
-      // Uses hardcoded IP address of instance
-      // TODO: inject IP via env vars
-      const response = await fetch('http://34.45.158.253/api/routes/chat/', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/routes/chat/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
