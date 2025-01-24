@@ -22,13 +22,13 @@ Constants:
 import base64
 import datetime
 import hashlib
-import logging
 import re
 from dataclasses import dataclass
 from typing import Any, Final
 
 import jwt
 import requests
+import structlog
 from cryptography import x509
 from cryptography.exceptions import InvalidKey
 from cryptography.hazmat.backends import default_backend
@@ -37,7 +37,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from OpenSSL.crypto import X509, X509Store, X509StoreContext
 from OpenSSL.crypto import Error as OpenSSLError
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger(__name__)
 
 
 class VtpmValidationError(Exception):
@@ -116,6 +116,7 @@ class VtpmValidation:
         self.expected_issuer = expected_issuer
         self.oidc_endpoint = oidc_endpoint
         self.pki_endpoint = pki_endpoint
+        self.logger = logger.bind(router="vtpm_validation")
 
     def validate_token(self, token: str) -> dict[str, Any]:
         """
@@ -137,7 +138,7 @@ class VtpmValidation:
             CertificateParsingError: If certificates cannot be parsed
         """
         unverified_header = jwt.get_unverified_header(token)
-        logger.info("Unverified token header: %s", unverified_header)
+        self.logger.info("token", unverified_header=unverified_header)
 
         if unverified_header.get("alg") != ALGO:
             msg = f"Invalid algorithm: got {unverified_header.get('alg')}, "
@@ -146,8 +147,10 @@ class VtpmValidation:
 
         if unverified_header.get("x5c", None):
             # if x5c certs in header, token uses pki scheme
+            self.logger.info("PKI_token", alg=unverified_header.get("alg"))
             return self._decode_and_validate_pki(token, unverified_header)
         # token uses oidc scheme
+        self.logger.info("OIDC_token", alg=unverified_header.get("alg"))
         return self._decode_and_validate_oidc(token, unverified_header)
 
     def _decode_and_validate_oidc(
@@ -179,7 +182,7 @@ class VtpmValidation:
         # Find the correct key based on the key ID (kid) in header
         for key in jwks["keys"]:
             if key.get("kid") == unverified_header["kid"]:
-                logger.info("Found matching kid: %s", key["kid"])
+                self.logger.info("kid_match", kid=key["kid"])
                 rsa_key = self._jwk_to_rsa_key(key)
                 break
 
@@ -189,18 +192,28 @@ class VtpmValidation:
 
         # Verify and decode the token using the public RSA key
         try:
-            return jwt.decode(
+            validated_token = jwt.decode(
                 token, rsa_key, algorithms=[ALGO], options={"verify_aud": False}
+            )
+            self.logger.info(
+                "signature_match",
+                issuer=self.expected_issuer,
+                public_numbers=rsa_key.public_numbers,
             )
         except jwt.ExpiredSignatureError as e:
             msg = "Token has expired"
+            self.logger.exception("token_expired", error=e)
             raise SignatureValidationError(msg) from e
         except jwt.InvalidTokenError as e:
-            msg = f"Invalid token: {e!s}"
+            msg = "Token is invalid"
+            self.logger.exception("invalid_token", error=e)
             raise VtpmValidationError(msg) from e
         except Exception as e:
-            msg = f"Unexpected error during validation: {e}"
+            msg = "Unexpected error during validation"
+            self.logger.exception("unexpected_error", error=e)
             raise VtpmValidationError(msg) from e
+        else:
+            return validated_token
 
     def _decode_and_validate_pki(
         self, token: str, unverified_header: dict[str, str]
