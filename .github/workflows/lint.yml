@@ -15,18 +15,9 @@ jobs:
 
       # Set up Python environment
       - name: Set up uv
-        uses: astral-sh/setup-uv@v3 # Pin to specific version
+        uses: astral-sh/setup-uv@v5 # Pin to specific version
         with:
-          version: "latest"
-
-      # Cache dependencies
-      - name: Cache dependencies
-        uses: actions/cache@v3 # Pin to specific version
-        with:
-          path: ~/.uv/cache
-          key: ${{ runner.os }}-uv-${{ matrix.python-version }}-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-uv-${{ matrix.python-version }}-
+          version: "0.5.24"
 
       # Install dependencies
       - name: Install dependencies
