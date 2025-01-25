@@ -11,6 +11,8 @@ dependencies = [
     "aiohttp>=3.11.11",
     "pydantic-settings>=2.7.1",
     "python-dotenv>=1.0.1",
+    "requests>=2.32.3",
+    "requests-unixsocket>=0.3.0",
     "structlog>=25.1.0",
 ]
 
@@ -24,7 +26,6 @@ validate = [
     "cryptography>=44.0.0",
     "pyjwt>=2.10.1",
     "pyopenssl>=25.0.0",
-    "requests>=2.32.3",
 ]
 ai = [
     "google-generativeai>=0.8.3",
