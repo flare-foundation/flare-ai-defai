@@ -39,89 +39,24 @@ class VtpmAttestationError(Exception):
     """
 
 
-class Vtpm(HTTPConnection):
+class Vtpm():
     """
-    Client for requesting attestation tokens via Unix domain socket.
-
-    Extends HTTPConnection to communicate with the local attestation service
-    through a Unix domain socket instead of TCP/IP.
-
-    Args:
-        host: Hostname for the HTTP connection (default: "localhost")
-        unix_socket_path: Path to the attestation service Unix socket
-            (default: "/run/container_launcher/teeserver.sock")
-
-    Example:
-    client = VtpmAttestation()
-    try:
-        token = client.get_token(
-            nonces=["random_nonce_value"],
-            audience="https://sts.google.com",
-            token_type="OIDC"
-        )
-    except VtpmAttestationError as e:
-        # Handle attestation error
-    """
+    Client for requesting attestation tokens via Unix domain socket."""
 
     def __init__(
         self,
-        host: str = "http://localhost",
+        url: str = "http://localhost/v1/token",
         unix_socket_path: str = "/run/container_launcher/teeserver.sock",
         simulate: bool = False,  # noqa: FBT001, FBT002
     ) -> None:
-        super().__init__(host)
+        self.url = url
         self.unix_socket_path = unix_socket_path
         self.simulate = simulate
         self.attestation_requested: bool = False
         self.logger = logger.bind(router="vtpm")
         self.logger.debug(
-            "vtpm", simulate=simulate, host=host, unix_socket_path=self.unix_socket_path
+            "vtpm", simulate=simulate, url=url, unix_socket_path=self.unix_socket_path
         )
-
-    def reset(self) -> None:
-        self.sock.close()
-        self.logger("reset_vtpm", sock=self.sock)
-
-    @override
-    def connect(self) -> None:
-        """
-        Establish connection to the Unix domain socket.
-
-        Overrides HTTPConnection.connect() to use Unix domain socket
-        instead of TCP/IP socket.
-
-        Raises:
-            VtpmAttestationError: If connection to socket fails
-        """
-        if self.simulate:
-            return
-        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        self.sock.connect(self.unix_socket_path)
-        self.logger.debug("connect_socket", unix_socket_path=self.unix_socket_path)
-
-    def _post(self, endpoint: str, body: str, headers: dict[str, str]) -> bytes:
-        """
-        Send POST request to attestation service endpoint.
-
-        Args:
-            endpoint: API endpoint path
-            body: JSON request body
-            headers: HTTP request headers
-
-        Returns:
-            bytes: Raw response from the attestation service
-
-        Raises:
-            VtpmAttestationError: If request fails or response status is not 200
-        """
-        self.logger.debug("post", body=body)
-        self.request("POST", endpoint, body=body, headers=headers)
-        res = self.getresponse()
-        success_status = 200
-        if res.status != success_status:
-            msg = f"Failed to get attestation response: {res.status} {res.reason}"
-            raise VtpmAttestationError(msg)
-        return res.read()
 
     def _check_nonce_length(self, nonces: list[str]) -> None:
         """
@@ -183,11 +118,30 @@ class Vtpm(HTTPConnection):
             self.logger.debug("sim_token", token=SIM_TOKEN)
             return SIM_TOKEN
 
+        # Connect to the socket
+        client_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        client_socket.connect(self.unix_socket_path)
+
+        # Create an HTTP connection object
+        conn = HTTPConnection("localhost", timeout=10)
+        conn.sock = client_socket
+
+        # Send a POST request
         headers = {"Content-Type": "application/json"}
         body = json.dumps(
             {"audience": audience, "token_type": token_type, "nonces": nonces}
         )
-        token_bytes = self._post("/v1/token", body=body, headers=headers)
-        token = token_bytes.decode()
+        conn.request("POST", self.url, body=body, headers=headers)
+        
+        # Get and decode the response
+        res = conn.getresponse()
+        success_status = 200
+        if res.status != success_status:
+            msg = f"Failed to get attestation response: {res.status} {res.reason}"
+            raise VtpmAttestationError(msg)
+        token = res.read().decode()
         self.logger.debug("token", token_type=token_type, token=token)
+            
+        # Close the connection
+        conn.close()
         return token
