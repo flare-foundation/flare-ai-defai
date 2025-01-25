@@ -14,7 +14,6 @@ import json
 import socket
 from http.client import HTTPConnection
 from pathlib import Path
-from typing import override
 
 import structlog
 
@@ -39,7 +38,7 @@ class VtpmAttestationError(Exception):
     """
 
 
-class Vtpm():
+class Vtpm:
     """
     Client for requesting attestation tokens via Unix domain socket."""
 
@@ -132,7 +131,7 @@ class Vtpm():
             {"audience": audience, "token_type": token_type, "nonces": nonces}
         )
         conn.request("POST", self.url, body=body, headers=headers)
-        
+
         # Get and decode the response
         res = conn.getresponse()
         success_status = 200
@@ -141,7 +140,7 @@ class Vtpm():
             raise VtpmAttestationError(msg)
         token = res.read().decode()
         self.logger.debug("token", token_type=token_type, token=token)
-            
+
         # Close the connection
         conn.close()
         return token
