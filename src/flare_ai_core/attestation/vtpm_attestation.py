@@ -75,7 +75,7 @@ class Vtpm(HTTPConnection):
         self.attestation_requested: bool = False
         self.logger = logger.bind(router="vtpm")
         self.logger.debug(
-            "vtpm", simulate=simulate, host=unix_socket_path=self.unix_socket_path
+            "vtpm", simulate=simulate, host=host, unix_socket_path=self.unix_socket_path
         )
 
     def reset(self) -> None:
