@@ -2,9 +2,8 @@
 Client for communicating with the Confidential Space vTPM attestation service.
 
 This module provides a client to request attestation tokens from a local Unix domain
-socket endpoint. It uses the requests library with a custom transport adapter to handle
-Unix socket communication and implements token request functionality
-with nonce validation.
+socket endpoint. It extends HTTPConnection to handle Unix socket communication and
+implements token request functionality with nonce validation.
 
 Classes:
     VtpmAttestationError: Exception for attestation service communication errors
@@ -12,11 +11,12 @@ Classes:
 """
 
 import json
+import socket
+from http.client import HTTPConnection
 from pathlib import Path
+from typing import override
 
-import requests
 import structlog
-from requests_unixsocket import UnixAdapter
 
 logger = structlog.get_logger(__name__)
 
@@ -39,17 +39,17 @@ class VtpmAttestationError(Exception):
     """
 
 
-class Vtpm:
+class Vtpm(HTTPConnection):
     """
     Client for requesting attestation tokens via Unix domain socket.
 
-    Uses requests with UnixAdapter to communicate with the local attestation service
+    Extends HTTPConnection to communicate with the local attestation service
     through a Unix domain socket instead of TCP/IP.
 
     Args:
+        host: Hostname for the HTTP connection (default: "localhost")
         unix_socket_path: Path to the attestation service Unix socket
             (default: "/run/container_launcher/teeserver.sock")
-        simulate: Whether to run in simulation mode (default: False)
 
     Example:
     client = VtpmAttestation()
@@ -65,37 +65,41 @@ class Vtpm:
 
     def __init__(
         self,
+        host: str = "http://localhost",
         unix_socket_path: str = "/run/container_launcher/teeserver.sock",
-        simulate: bool = False,  # noqa: FBT001,FBT002
+        simulate: bool = False,  # noqa: FBT001, FBT002
     ) -> None:
+        super().__init__(host)
         self.unix_socket_path = unix_socket_path
         self.simulate = simulate
-        self.session: requests.Session | None = None
         self.attestation_requested: bool = False
         self.logger = logger.bind(router="vtpm")
-        self.logger.debug("simulate_mode", simulate=simulate)
+        self.logger.debug(
+            "vtpm", simulate=simulate, host=unix_socket_path=self.unix_socket_path
+        )
 
-    def _get_session(self) -> requests.Session:
+    def reset(self) -> None:
+        self.sock.close()
+        self.logger("reset_vtpm", sock=self.sock)
+
+    @override
+    def connect(self) -> None:
         """
-        Get or create a requests session with Unix socket adapter.
+        Establish connection to the Unix domain socket.
 
-        Returns:
-            requests.Session: Session configured for Unix socket communication
+        Overrides HTTPConnection.connect() to use Unix domain socket
+        instead of TCP/IP socket.
+
+        Raises:
+            VtpmAttestationError: If connection to socket fails
         """
-        if self.session is None:
-            self.session = requests.Session()
-            if not self.simulate:
-                # Convert the Unix socket path to the format
-                # expected by requests_unixsocket
-                unix_url = f"http+unix://{self.unix_socket_path.replace('/', '%2F')}"
-                self.session.mount("http+unix://", UnixAdapter())
-                self.base_url = unix_url
-                self.logger.debug(
-                    "connect_socket", unix_socket_path=self.unix_socket_path
-                )
-        return self.session
+        if self.simulate:
+            return
+        self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        self.sock.connect(self.unix_socket_path)
+        self.logger.debug("connect_socket", unix_socket_path=self.unix_socket_path)
 
-    def _post(self, endpoint: str, body: str, headers: dict[str, str]) -> str:
+    def _post(self, endpoint: str, body: str, headers: dict[str, str]) -> bytes:
         """
         Send POST request to attestation service endpoint.
 
@@ -105,24 +109,19 @@ class Vtpm:
             headers: HTTP request headers
 
         Returns:
-            str: Response content from the attestation service
+            bytes: Raw response from the attestation service
 
         Raises:
             VtpmAttestationError: If request fails or response status is not 200
         """
         self.logger.debug("post", body=body)
-        session = self._get_session()
-
-        try:
-            response = session.post(
-                f"{self.base_url}{endpoint}", data=body, headers=headers
-            )
-            response.raise_for_status()
-        except requests.exceptions.RequestException as e:
-            msg = f"Failed to get attestation response: {e!s}"
-            raise VtpmAttestationError(msg) from e
-
-        return response.text
+        self.request("POST", endpoint, body=body, headers=headers)
+        res = self.getresponse()
+        success_status = 200
+        if res.status != success_status:
+            msg = f"Failed to get attestation response: {res.status} {res.reason}"
+            raise VtpmAttestationError(msg)
+        return res.read()
 
     def _check_nonce_length(self, nonces: list[str]) -> None:
         """
@@ -181,13 +180,14 @@ class Vtpm:
         """
         self._check_nonce_length(nonces)
         if self.simulate:
-            self.logger.debug("sim_token")
+            self.logger.debug("sim_token", token=SIM_TOKEN)
             return SIM_TOKEN
 
         headers = {"Content-Type": "application/json"}
         body = json.dumps(
             {"audience": audience, "token_type": token_type, "nonces": nonces}
         )
-        token = self._post("/v1/token", body=body, headers=headers)
+        token_bytes = self._post("/v1/token", body=body, headers=headers)
+        token = token_bytes.decode()
         self.logger.debug("token", token_type=token_type, token=token)
         return token

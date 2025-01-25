@@ -20,7 +20,7 @@ from web3 import Web3
 from web3.exceptions import Web3RPCError
 
 from flare_ai_core.ai import GeminiProvider
-from flare_ai_core.attestation import Vtpm
+from flare_ai_core.attestation import Vtpm, VtpmAttestationError
 from flare_ai_core.blockchain import FlareProvider
 from flare_ai_core.prompts import PromptService, SemanticRouterResponse
 from flare_ai_core.settings import settings
@@ -130,9 +130,12 @@ class ChatRouter:
                     )
                     return {"response": tx_confirmation_response.text}
                 if self.attestation.attestation_requested:
-                    token = self.attestation.get_token([message.message])
+                    try:
+                        resp = self.attestation.get_token([message.message])
+                    except VtpmAttestationError as e:
+                        resp = f"The attestation failed with  error:\n{e.args[0]}"
                     self.attestation.attestation_requested = False
-                    return {"response": token}
+                    return {"response": resp}
 
                 route = await self.get_semantic_route(message.message)
                 return await self.route_message(route, message.message)
