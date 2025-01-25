@@ -3,7 +3,7 @@ name: Build and Push
 on:
   push:
     # tags: ["v*.*.*"] # Match semantic versioning tags like v1.0.0
-    branches: ["main"]
+    branches: ["main", "ui"]
   workflow_dispatch: # Allow manual triggering of the workflow
 
 env:
