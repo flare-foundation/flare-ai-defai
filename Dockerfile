@@ -18,7 +18,7 @@ COPY --from=builder /flare-ai-core/README.md .
 LABEL "tee.launch_policy.allow_env_override"="GEMINI_API_KEY,GEMINI_MODEL,WEB3_PROVIDER_URL,WEB3_EXPLORER_URL,SIMULATE_ATTESTATION"
 LABEL "tee.launch_policy.log_redirect"="always"
 
-EXPOSE 8000
+EXPOSE 8080
 
 # Define the entrypoint
 ENTRYPOINT ["uv", "run", "start-backend"]
