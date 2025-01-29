@@ -28,7 +28,7 @@ COPY --from=backend-builder /flare-ai-core/README.md .
 COPY --from=frontend-builder /frontend/build /usr/share/nginx/html
 
 # Copy nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/sites-enabled/default
 
 # Setup supervisor configuration
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
