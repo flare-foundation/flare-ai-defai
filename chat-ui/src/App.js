@@ -26,7 +26,7 @@ const ChatInterface = () => {
 
   const handleSendMessage = async (text) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/routes/chat/`, {
+      const response = await fetch('api/routes/chat/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

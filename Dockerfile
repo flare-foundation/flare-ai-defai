@@ -1,10 +1,8 @@
 # Stage 1: Build Frontend
 FROM node:18-alpine AS frontend-builder
 WORKDIR /frontend
-COPY chat-ui/package*.json ./
-RUN npm install
 COPY chat-ui/ .
-ENV REACT_APP_API_URL=/api
+RUN npm install
 RUN npm run build
 
 # Stage 2: Build Backend
