@@ -1,6 +1,8 @@
 # Flare AI Core
 
-A confidential computing solution for AI workloads on Google Cloud Platform, supporting both AMD SEV and Intel TDX architectures.
+A modular SDK for confidential AI workloads, running on Trusted Execution Environments (TEE) with support for AMD SEV and Intel TDX architectures.
+
+<img width="500" alt="Artemis (built with flare-ai-core)" src="https://github.com/user-attachments/assets/921fbfe2-9d52-496c-9b48-9dfc32a86208" />
 
 ## Prerequisites
 
