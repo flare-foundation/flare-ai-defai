@@ -3,7 +3,7 @@ name: Build and Push
 on:
   push:
     # tags: ["v*.*.*"] # Match semantic versioning tags like v1.0.0
-    branches: ["main"]
+    branches: ["main", "ui"]
   workflow_dispatch: # Allow manual triggering of the workflow
 
 env:
@@ -40,7 +40,7 @@ jobs:
 
       # Cache Docker layers to speed up builds
       - name: Cache Docker layers
-        uses: actions/cache@v3 # Pin to a specific version
+        uses: actions/cache@v3
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-docker-${{ github.ref }}
@@ -49,7 +49,7 @@ jobs:
 
       # Build and push Docker image
       - name: Build and push Docker image
-        uses: docker/build-push-action@v6 # Pin to a specific version
+        uses: docker/build-push-action@v6
         id: push
         with:
           context: .
