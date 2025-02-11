@@ -18,50 +18,21 @@ logger = structlog.get_logger(__name__)
 class Settings(BaseSettings):
     """
     Application settings model that provides configuration for all components.
-
-    Attributes:
-        simulate_attestation (bool): Flag to enable/disable attestation simulation.
-            Defaults to False.
-
-        cors_origins (list[str]): List of allowed CORS origins.
-            Defaults to ["*"] allowing all origins.
-
-        gemini_api_key (str): API key for accessing Google's Gemini AI service.
-            Must be provided via environment variable or .env file.
-            Defaults to empty string.
-
-        gemini_model (str): The Gemini model identifier to use.
-            Defaults to "gemini-1.5-flash".
-
-        api_version (str): Version string for the API.
-            Defaults to "v1".
-
-        web3_provider_url (str): URL for the Flare Network Web3 provider.
-            Defaults to Coston2 testnet RPC endpoint:
-            "https://coston2-api.flare.network/ext/C/rpc"
-
-        web3_explorer_url (str): URL for the Flare Network block explorer.
-            Defaults to Coston2 testnet explorer:
-            "https://coston2-explorer.flare.network/"
-
-    Environment Variables:
-        All settings can be overridden by environment variables with the same name
-        in uppercase, e.g.:
-        - SIMULATE_ATTESTATION
-        - CORS_ORIGINS
-        - GEMINI_API_KEY
-        - GEMINI_MODEL
-        - API_VERSION
-        - WEB3_PROVIDER_URL
-        - WEB3_EXPLORER_URL
     """
 
+    # Flag to enable/disable attestation simulation
     simulate_attestation: bool = False
+    # Restrict backend listener to specific IPs
     cors_origins: list[str] = ["*"]
+    # API key for accessing Google's Gemini AI service
     gemini_api_key: str = ""
+    # The Gemini model identifier to use
     gemini_model: str = "gemini-1.5-flash"
+    # API version to use at the backend
     api_version: str = "v1"
+    # URL for the Flare Network RPC provider
     web3_provider_url: str = "https://coston2-api.flare.network/ext/C/rpc"
+    # URL for the Flare Network block explorer
     web3_explorer_url: str = "https://coston2-explorer.flare.network/"
 
     model_config = SettingsConfigDict(
