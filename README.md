@@ -1,8 +1,8 @@
-# Flare AI Core
+# Flare AI DeFAI
 
-A modular SDK for confidential AI workloads, running on Trusted Execution Environments (TEE) with support for AMD SEV and Intel TDX architectures.
+A modular SDK for confidential AI x DeFi workloads, running on Trusted Execution Environments (TEE) with support for AMD SEV and Intel TDX architectures.
 
-<img width="500" alt="Artemis (built with flare-ai-core)" src="https://github.com/user-attachments/assets/921fbfe2-9d52-496c-9b48-9dfc32a86208" />
+<img width="500" alt="Artemis" src="https://github.com/user-attachments/assets/921fbfe2-9d52-496c-9b48-9dfc32a86208" />
 
 ## Prerequisites
 
@@ -15,7 +15,7 @@ A modular SDK for confidential AI workloads, running on Trusted Execution Enviro
 1. Add the following environment variables to your shell configuration file (`~/.bashrc` or `~/.zshrc`):
 
 ```bash
-export TEE_IMAGE_REFERENCE=ghcr.io/flare-foundation/flare-ai-core:main
+export TEE_IMAGE_REFERENCE=ghcr.io/flare-foundation/flare-ai-defai:main
 export GEMINI_API_KEY=<your-gemini-api-key>
 export WEB3_PROVIDER_URL=https://coston2-api.flare.network/ext/C/rpc
 export WEB3_EXPLORER_URL=https://coston2-explorer.flare.network/
@@ -31,7 +31,7 @@ source ~/.bashrc  # or ~/.zshrc
 3. Verify the configuration:
 
 ```bash
-echo $TEE_IMAGE_REFERENCE  # Should output: ghcr.io/flare-foundation/flare-ai-core:main
+echo $TEE_IMAGE_REFERENCE  # Should output: ghcr.io/flare-foundation/flare-ai-defai:main
 ```
 
 ## Deployment
@@ -57,7 +57,7 @@ tee-env-SIMULATE_ATTESTATION=false \
   --service-account=confidential-sa@flare-network-sandbox.iam.gserviceaccount.com \
   --scopes=https://www.googleapis.com/auth/cloud-platform \
   --min-cpu-platform="AMD Milan" \
-  --tags=flare-ai-core,http-server,https-server \
+  --tags=flare-ai-defai,http-server,https-server \
   --create-disk=auto-delete=yes,\
 boot=yes,\
 device-name=ai-core-$TEAM_NAME,\
@@ -93,7 +93,7 @@ tee-env-SIMULATE_ATTESTATION=false \
   --provisioning-model=STANDARD \
   --service-account=confidential-sa@flare-network-sandbox.iam.gserviceaccount.com \
   --scopes=https://www.googleapis.com/auth/cloud-platform \
-  --tags=flare-ai-core,http-server,https-server \
+  --tags=flare-ai-defai,http-server,https-server \
   --create-disk=auto-delete=yes,\
 boot=yes,\
 device-name=ai-core-$TEAM_NAME,\
