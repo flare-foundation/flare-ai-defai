@@ -36,12 +36,12 @@ echo $TEE_IMAGE_REFERENCE  # Should output: ghcr.io/flare-foundation/flare-ai-de
 
 ## Deployment
 
-### AMD SEV Deployment
+### AMD SEV Deployment (recommended)
 
 Deploy an AMD SEV-enabled instance with the following configuration:
 
 ```bash
-gcloud compute instances create ai-core-$TEAM_NAME \
+gcloud compute instances create defai-$TEAM_NAME \
   --project=google-hackathon-project \
   --zone=us-central1-c \
   --machine-type=n2d-standard-2 \
@@ -60,7 +60,7 @@ tee-env-SIMULATE_ATTESTATION=false \
   --tags=flare-ai-defai,http-server,https-server \
   --create-disk=auto-delete=yes,\
 boot=yes,\
-device-name=ai-core-$TEAM_NAME,\
+device-name=defai-$TEAM_NAME,\
 image=projects/confidential-space-images/global/images/confidential-space-debug-250100,\
 mode=rw,\
 size=11,\
@@ -78,7 +78,7 @@ type=pd-standard \
 For Intel TDX machines, use this alternative configuration:
 
 ```bash
-gcloud compute instances create ai-core-$TEAM_NAME \
+gcloud compute instances create defai-$TEAM_NAME \
   --project=google-hackathon-project \
   --machine-type=c3-standard-4 \
   --maintenance-policy=TERMINATE \
@@ -96,7 +96,7 @@ tee-env-SIMULATE_ATTESTATION=false \
   --tags=flare-ai-defai,http-server,https-server \
   --create-disk=auto-delete=yes,\
 boot=yes,\
-device-name=ai-core-$TEAM_NAME,\
+device-name=defai-$TEAM_NAME,\
 image=projects/confidential-space-images/global/images/confidential-space-debug-0-tdxpreview-c38b622,\
 mode=rw,\
 size=11,\
