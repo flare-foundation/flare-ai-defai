@@ -7,8 +7,8 @@ RUN npm run build
 
 # Stage 2: Build Backend
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS backend-builder
-ADD . /flare-ai-core
-WORKDIR /flare-ai-core
+ADD . /flare-ai-defai
+WORKDIR /flare-ai-defai
 RUN uv sync --frozen
 
 # Stage 3: Final Image
@@ -19,10 +19,10 @@ RUN apt-get update && apt-get install -y nginx supervisor curl && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY --from=backend-builder /flare-ai-core/.venv ./.venv
-COPY --from=backend-builder /flare-ai-core/src ./src
-COPY --from=backend-builder /flare-ai-core/pyproject.toml .
-COPY --from=backend-builder /flare-ai-core/README.md .
+COPY --from=backend-builder /flare-ai-defai/.venv ./.venv
+COPY --from=backend-builder /flare-ai-defai/src ./src
+COPY --from=backend-builder /flare-ai-defai/pyproject.toml .
+COPY --from=backend-builder /flare-ai-defai/README.md .
 
 # Copy frontend files
 COPY --from=frontend-builder /frontend/build /usr/share/nginx/html
