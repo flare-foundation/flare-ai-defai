@@ -1,18 +1,29 @@
 # Flare AI DeFAI
 
-A modular SDK for confidential AI x DeFi workloads, running on Trusted Execution Environments (TEE) with support for AMD SEV and Intel TDX architectures.
+Flare AI SDK template for AI x DeFi (DeFAI).
+
+### 🚀 Key Features
+
+- **Secure AI Execution** – Runs within a Trusted Execution Environment (TEE) with remote attestation support.
+- **Built-in Chat UI** – Interact with AI securely, served directly from TEE.
+- **Flare Blockchain Integration** – Native support for token transactions and operations.
+- **Gemini AI Model Support** – Seamlessly integrates with Google's Gemini AI.
 
 <img width="500" alt="Artemis" src="https://github.com/user-attachments/assets/921fbfe2-9d52-496c-9b48-9dfc32a86208" />
 
-## Prerequisites
+## 📌 Prerequisites
 
-- Google Cloud Platform account with access to the `google-hackathon-project`
-- Gemini API key
-- `gcloud` CLI installed and configured
+Before starting, ensure you have:
 
-## Environment Setup
+- A **Google Cloud Platform** account with access to `google-hackathon-project`.
+- A **Gemini API Key** linked to the same project.
+- The **`gcloud` CLI** installed and configured on your system.
 
-1. Add the following environment variables to your shell configuration file (`~/.bashrc` or `~/.zshrc`):
+## ⚙️ Environment Setup
+
+### Step 1: Configure Environment Variables
+
+Add the following lines to your shell configuration file (`~/.bashrc` or `~/.zshrc`):
 
 ```bash
 export TEE_IMAGE_REFERENCE=ghcr.io/flare-foundation/flare-ai-defai:main
@@ -22,23 +33,26 @@ export WEB3_EXPLORER_URL=https://coston2-explorer.flare.network/
 export TEAM_NAME=<your-team-name>
 ```
 
-2. Reload your shell configuration:
+### Step 2: Apply Configuration
 
 ```bash
-source ~/.bashrc  # or ~/.zshrc
+source ~/.bashrc  # or source ~/.zshrc
 ```
 
-3. Verify the configuration:
+### Step 3: Verify Setup
 
 ```bash
-echo $TEE_IMAGE_REFERENCE  # Should output: ghcr.io/flare-foundation/flare-ai-defai:main
+echo $TEE_IMAGE_REFERENCE
+# Expected output: ghcr.io/flare-foundation/flare-ai-defai:main
 ```
 
-## Deployment
+## 🚀 Deployment
 
-### AMD SEV Deployment (recommended)
+You can deploy Flare AI DeFAI on **Confidential Compute Instances** using either **AMD SEV** or **Intel TDX**.
 
-Deploy an AMD SEV-enabled instance with the following configuration:
+### 🔹 Option 1: AMD SEV (Recommended)
+
+Deploy on **AMD Secure Encrypted Virtualization (SEV)**:
 
 ```bash
 gcloud compute instances create defai-$TEAM_NAME \
@@ -73,9 +87,9 @@ type=pd-standard \
   --confidential-compute-type=SEV
 ```
 
-### Intel TDX Deployment
+### Option 2: Intel TDX
 
-For Intel TDX machines, use this alternative configuration:
+Deploy on **Intel Trust Domain Extensions (TDX)**:
 
 ```bash
 gcloud compute instances create defai-$TEAM_NAME \
@@ -106,3 +120,28 @@ type=pd-balanced \
   --shielded-integrity-monitoring \
   --confidential-compute-type=TDX
 ```
+
+## 🔜 Next Steps
+
+Once your instance is running, access the Chat UI via the instance's **public IP address**.
+
+### Example Interactions
+
+💬 **"Create an account for me"**  
+💬 **"Show me your remote attestation"**  
+💬 **"Transfer 10 C2FLR to 0x000000000000000000000000000000000000dEaD"**
+
+Enjoy secure AI-powered DeFi with **Flare AI DeFAI**! 🚀
+
+### 🔧 Troubleshooting
+
+If you encounter issues:
+
+1. **Check logs**
+
+   ```bash
+   gcloud compute instances get-serial-port-output defai-$TEAM_NAME --project=google-hackathon-project
+   ```
+
+2. **Verify API Key** – Ensure `GEMINI_API_KEY` is correctly set.
+3. **Check Firewall** – Ensure your instance has public access.
