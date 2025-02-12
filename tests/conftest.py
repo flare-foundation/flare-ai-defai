@@ -1,8 +1,8 @@
 import pytest
 
-from flare_ai_core.ai import GeminiProvider
-from flare_ai_core.attestation import Vtpm
-from flare_ai_core.blockchain import FlareProvider
+from flare_ai_defai.ai import GeminiProvider
+from flare_ai_defai.attestation import Vtpm
+from flare_ai_defai.blockchain import FlareProvider
 
 
 @pytest.fixture

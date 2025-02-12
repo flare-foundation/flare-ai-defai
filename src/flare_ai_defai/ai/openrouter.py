@@ -1,4 +1,4 @@
-from flare_ai_core.ai.base import BaseAIProvider
+from flare_ai_defai.ai.base import BaseAIProvider
 
 
 class OpenRouterProvider(BaseAIProvider):

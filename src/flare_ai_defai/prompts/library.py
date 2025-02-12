@@ -20,13 +20,13 @@ Example:
 
 import structlog
 
-from flare_ai_core.prompts.schemas import (
+from flare_ai_defai.prompts.schemas import (
     Prompt,
     SemanticRouterResponse,
     TokenSendResponse,
     TokenSwapResponse,
 )
-from flare_ai_core.prompts.templates import (
+from flare_ai_defai.prompts.templates import (
     CONVERSATIONAL,
     GENERATE_ACCOUNT,
     REMOTE_ATTESTATION,

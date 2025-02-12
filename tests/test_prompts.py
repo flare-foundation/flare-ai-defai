@@ -1,6 +1,6 @@
 import pytest
 
-from flare_ai_core.prompts import PromptLibrary
+from flare_ai_defai.prompts import PromptLibrary
 
 
 def test_prompt_library_initialization() -> None:

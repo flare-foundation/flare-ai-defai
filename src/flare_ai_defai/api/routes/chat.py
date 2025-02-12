@@ -19,11 +19,11 @@ from pydantic import BaseModel, Field
 from web3 import Web3
 from web3.exceptions import Web3RPCError
 
-from flare_ai_core.ai import GeminiProvider
-from flare_ai_core.attestation import Vtpm, VtpmAttestationError
-from flare_ai_core.blockchain import FlareProvider
-from flare_ai_core.prompts import PromptService, SemanticRouterResponse
-from flare_ai_core.settings import settings
+from flare_ai_defai.ai import GeminiProvider
+from flare_ai_defai.attestation import Vtpm, VtpmAttestationError
+from flare_ai_defai.blockchain import FlareProvider
+from flare_ai_defai.prompts import PromptService, SemanticRouterResponse
+from flare_ai_defai.settings import settings
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()

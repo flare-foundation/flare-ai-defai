@@ -1,7 +1,7 @@
 [project]
-name = "flare-ai-core"
+name = "flare-ai-defai"
 version = "0.1.0"
-description = "Core SDK for using Flare AI."
+description = "Flare AI SDK template for AI x DeFi (DeFAI)"
 readme = "README.md"
 authors = [
   {name = "Dinesh Pinto", email = "annual.fallout_0z@icloud.com"},
@@ -37,7 +37,7 @@ ui = [
 ]
 
 [project.scripts]
-start-backend = "flare_ai_core.main:start"
+start-backend = "flare_ai_defai.main:start"
 
 [tool.uv]
 default-groups = ["dev", "validate", "onchain", "ui"]
@@ -55,7 +55,7 @@ ignore = ["D203", "D212", "COM812", "D", "S105", "ANN401", "T201", "ISC003"]
 
 [tool.ruff.lint.extend-per-file-ignores]
 "tests/**/*.py" = ["S101", "ARG"]
-"src/flare_ai_core/prompts/templates.py" = ["E501"]
+"src/flare_ai_defai/prompts/templates.py" = ["E501"]
 
 [tool.ruff.format]
 docstring-code-format = true

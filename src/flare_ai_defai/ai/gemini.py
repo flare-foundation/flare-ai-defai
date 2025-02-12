@@ -12,7 +12,7 @@ import google.generativeai as genai
 import structlog
 from google.generativeai.types import ContentDict
 
-from flare_ai_core.ai.base import BaseAIProvider, ModelResponse
+from flare_ai_defai.ai.base import BaseAIProvider, ModelResponse
 
 logger = structlog.get_logger(__name__)
 
