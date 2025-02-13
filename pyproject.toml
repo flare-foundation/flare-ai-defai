@@ -1,7 +1,7 @@
 [project]
 name = "flare-ai-defai"
 version = "0.1.0"
-description = "Flare AI SDK template for AI x DeFi (DeFAI)"
+description = "Flare AI Kit template for AI x DeFi (DeFAI)"
 readme = "README.md"
 authors = [
   {name = "Dinesh Pinto", email = "annual.fallout_0z@icloud.com"},
