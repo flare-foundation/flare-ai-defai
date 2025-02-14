@@ -38,6 +38,10 @@ The Docker build is optimized for local testing and mimics the TEE environment w
    docker run -p 80:80 -it --env-file .env flare-ai-defai
    ```
 
+3. **Open frontend in browser**
+
+   To open the frontend, navigate to [http://localhost:80](http://localhost:80)
+
 ### Manual Setup
 
 Flare AI DeFAI consists of a Python-based backend and a JavaScript frontend.
