@@ -100,35 +100,34 @@ Deploy Flare AI DeFAI on Confidential Compute Instances using either AMD SEV or 
 ### 📌 Prerequisites
 
 - **Google Cloud Platform Account:**  
-  Ensure you have access to the `google-hackathon-project`.
+  Ensure you have access to the `verifiable-ai-hackathon`.
 
 - **Gemini API Key:**  
   Link your Gemini API key to the same project.
 
 - **gcloud CLI:**  
-  Install and configure the [gcloud CLI](https://cloud.google.com/sdk/docs/install) on your system.
+  Install and authenticate the [gcloud CLI](https://cloud.google.com/sdk/docs/install) on your system.
 
 ### ⚙️ Environment Setup
 
 #### Step 1: Configure Environment Variables
 
-Add the following lines to your shell configuration file (e.g., `~/.bashrc` or `~/.zshrc`):
+Make sure the following variables are set in `.env`:
 
 ```bash
-export TEE_IMAGE_REFERENCE=ghcr.io/flare-foundation/flare-ai-defai:main
-export GEMINI_API_KEY=<your-gemini-api-key>
-export WEB3_PROVIDER_URL=https://coston2-api.flare.network/ext/C/rpc
-export WEB3_EXPLORER_URL=https://coston2-explorer.flare.network/
-export INSTANCE_NAME=<project-name>-<team-name>
+TEE_IMAGE_REFERENCE=ghcr.io/flare-foundation/flare-ai-defai:main # set this your repo build image
+INSTANCE_NAME=<PROJECT_NAME-TEAM-_NAME
 ```
 
 #### Step 2: Apply the Configuration
 
-Reload your shell configuration:
+Add the environment variables to your current shell:
 
 ```bash
-source ~/.bashrc  # or source ~/.zshrc
+source .env
 ```
+
+**Note:** If you open a new shell you will need to run this command again.
 
 #### Step 3: Verify the Setup
 
@@ -156,7 +155,7 @@ gcloud compute instances create $INSTANCE_NAME \
   --metadata=tee-image-reference=$TEE_IMAGE_REFERENCE,\
 tee-container-log-redirect=true,\
 tee-env-GEMINI_API_KEY=$GEMINI_API_KEY,\
-tee-env-GEMINI_MODEL=gemini-1.5-flash,\
+tee-env-GEMINI_MODEL=$GEMINI_MODEL,\
 tee-env-WEB3_PROVIDER_URL=$WEB3_PROVIDER_URL,\
 tee-env-SIMULATE_ATTESTATION=false \
   --maintenance-policy=MIGRATE \
