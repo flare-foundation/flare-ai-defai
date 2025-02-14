@@ -22,6 +22,12 @@ Flare AI Kit template for AI x DeFi (DeFAI).
 
 You can build and run Flare AI DeFAI using Docker (recommended) or set up the backend and frontend manually.
 
+### Setup .env
+
+1. Rename `.env.example` to `env` and set all the variables.
+
+2. Make sure `SIMULATE_ATTESTATION=true` for local testing
+
 ### With Docker (Recommended)
 
 The Docker build is optimized for local testing and mimics the TEE environment with minimal adjustments. It includes an Nginx server for routing and uses Supervisor to manage both backend and frontend services within a single container.
