@@ -1,62 +1,145 @@
 # Flare AI DeFAI
 
-Flare AI SDK template for AI x DeFi (DeFAI).
+Flare AI Kit template for AI x DeFi (DeFAI).
 
-### 🚀 Key Features
+## 🚀 Key Features
 
-- **Secure AI Execution** – Runs within a Trusted Execution Environment (TEE) with remote attestation support.
-- **Built-in Chat UI** – Interact with AI securely, served directly from TEE.
-- **Flare Blockchain Integration** – Native support for token transactions and operations.
-- **Gemini AI Model Support** – Seamlessly integrates with Google's Gemini AI.
+- **Secure AI Execution**  
+  Runs within a Trusted Execution Environment (TEE) with remote attestation support for enhanced security.
+
+- **Built-in Chat UI**  
+  Interact with your AI securely—the chat interface is served directly from the TEE.
+
+- **Flare Blockchain Integration**  
+  Enjoy native support for token operations on the Flare blockchain.
+
+- **Gemini 2.0 Support**  
+  Leverage Google Gemini with structured query support for advanced AI capabilities.
 
 <img width="500" alt="Artemis" src="https://github.com/user-attachments/assets/921fbfe2-9d52-496c-9b48-9dfc32a86208" />
 
-## 📌 Prerequisites
+## 🏗️ Build Instructions
 
-Before starting, ensure you have:
+You can build and run Flare AI DeFAI using Docker (recommended) or set up the backend and frontend manually.
 
-- A **Google Cloud Platform** account with access to `google-hackathon-project`.
-- A **Gemini API Key** linked to the same project.
-- The **`gcloud` CLI** installed and configured on your system.
+### With Docker (Recommended)
 
-## ⚙️ Environment Setup
+The Docker build is optimized for local testing and mimics the TEE environment with minimal adjustments. It includes an Nginx server for routing and uses Supervisor to manage both backend and frontend services within a single container.
 
-### Step 1: Configure Environment Variables
+1. **Build the Docker image:**
 
-Add the following lines to your shell configuration file (`~/.bashrc` or `~/.zshrc`):
+   ```bash
+   docker build -t flare-ai-defai .
+   ```
+
+2. **Run the Docker container:**
+
+   ```bash
+   docker run -p 80:80 -it --env-file .env flare-ai-defai
+   ```
+
+### Manual Setup
+
+Flare AI DeFAI consists of a Python-based backend and a JavaScript frontend.
+
+#### Backend Setup
+
+1. **Install Dependencies:**  
+   Backend dependencies are managed using [uv](https://docs.astral.sh/uv/getting-started/installation/):
+
+   ```bash
+   uv sync --all-extras
+   ```
+
+2. **Start the Backend:**  
+   By default, the backend is served on `0.0.0.0:8080`.
+
+   ```bash
+   uv run start-backend
+   ```
+
+#### Frontend Setup
+
+1. **Install Dependencies:**  
+   Navigate to the `chat-ui/` directory and install the necessary packages via [npm](https://nodejs.org/en/download):
+
+   ```bash
+   cd chat-ui/
+   npm install
+   ```
+
+2. **Configure the Frontend:**  
+   Modify `chat-ui/src/App.js` to update the backend URL during testing:
+
+   ```js
+   const BACKEND_ROUTE = "http://localhost:8080/api/routes/chat/";
+   ```
+
+   **Note:** Remember to revert `BACKEND_ROUTE` back to `'api/routes/chat/'` after testing.
+
+3. **Start the Frontend:**
+
+   ```bash
+   npm start
+   ```
+
+## 🚀 Deploy on TEE
+
+Deploy Flare AI DeFAI on Confidential Compute Instances using either AMD SEV or Intel TDX.
+
+### 📌 Prerequisites
+
+- **Google Cloud Platform Account:**  
+  Ensure you have access to the `google-hackathon-project`.
+
+- **Gemini API Key:**  
+  Link your Gemini API key to the same project.
+
+- **gcloud CLI:**  
+  Install and configure the [gcloud CLI](https://cloud.google.com/sdk/docs/install) on your system.
+
+### ⚙️ Environment Setup
+
+#### Step 1: Configure Environment Variables
+
+Add the following lines to your shell configuration file (e.g., `~/.bashrc` or `~/.zshrc`):
 
 ```bash
 export TEE_IMAGE_REFERENCE=ghcr.io/flare-foundation/flare-ai-defai:main
 export GEMINI_API_KEY=<your-gemini-api-key>
 export WEB3_PROVIDER_URL=https://coston2-api.flare.network/ext/C/rpc
 export WEB3_EXPLORER_URL=https://coston2-explorer.flare.network/
-export TEAM_NAME=<your-team-name>
+export INSTANCE_NAME=<project-name>-<team-name>
 ```
 
-### Step 2: Apply Configuration
+#### Step 2: Apply the Configuration
+
+Reload your shell configuration:
 
 ```bash
 source ~/.bashrc  # or source ~/.zshrc
 ```
 
-### Step 3: Verify Setup
+#### Step 3: Verify the Setup
+
+Confirm that the environment variable is set correctly:
 
 ```bash
 echo $TEE_IMAGE_REFERENCE
 # Expected output: ghcr.io/flare-foundation/flare-ai-defai:main
 ```
 
-## 🚀 Deployment
+### Deploying on Confidential Space
 
-You can deploy Flare AI DeFAI on **Confidential Compute Instances** using either **AMD SEV** or **Intel TDX**.
+Choose your deployment option based on your hardware preference.
 
-### 🔹 Option 1: AMD SEV (Recommended)
+#### 🔹 Option 1: AMD SEV (Recommended)
 
-Deploy on **AMD Secure Encrypted Virtualization (SEV)**:
+Deploy on AMD Secure Encrypted Virtualization (SEV):
 
 ```bash
-gcloud compute instances create defai-$TEAM_NAME \
-  --project=google-hackathon-project \
+gcloud compute instances create $INSTANCE_NAME \
+  --project=verifiable-ai-hackathon \
   --zone=us-central1-c \
   --machine-type=n2d-standard-2 \
   --network-interface=network-tier=PREMIUM,nic-type=GVNIC,stack-type=IPV4_ONLY,subnet=default \
@@ -71,10 +154,10 @@ tee-env-SIMULATE_ATTESTATION=false \
   --service-account=confidential-sa@flare-network-sandbox.iam.gserviceaccount.com \
   --scopes=https://www.googleapis.com/auth/cloud-platform \
   --min-cpu-platform="AMD Milan" \
-  --tags=flare-ai-defai,http-server,https-server \
+  --tags=flare-ai,http-server,https-server \
   --create-disk=auto-delete=yes,\
 boot=yes,\
-device-name=defai-$TEAM_NAME,\
+device-name=$INSTANCE_NAME,\
 image=projects/confidential-space-images/global/images/confidential-space-debug-250100,\
 mode=rw,\
 size=11,\
@@ -87,13 +170,13 @@ type=pd-standard \
   --confidential-compute-type=SEV
 ```
 
-### Option 2: Intel TDX
+#### Option 2: Intel TDX
 
-Deploy on **Intel Trust Domain Extensions (TDX)**:
+Deploy on Intel Trust Domain Extensions (TDX):
 
 ```bash
-gcloud compute instances create defai-$TEAM_NAME \
-  --project=google-hackathon-project \
+gcloud compute instances create $INSTANCE_NAME \
+  --project=verifiable-ai-hackathon \
   --machine-type=c3-standard-4 \
   --maintenance-policy=TERMINATE \
   --zone=us-central1-c \
@@ -107,10 +190,10 @@ tee-env-SIMULATE_ATTESTATION=false \
   --provisioning-model=STANDARD \
   --service-account=confidential-sa@flare-network-sandbox.iam.gserviceaccount.com \
   --scopes=https://www.googleapis.com/auth/cloud-platform \
-  --tags=flare-ai-defai,http-server,https-server \
+  --tags=flare-ai,http-server,https-server \
   --create-disk=auto-delete=yes,\
 boot=yes,\
-device-name=defai-$TEAM_NAME,\
+device-name=$INSTANCE_NAME,\
 image=projects/confidential-space-images/global/images/confidential-space-debug-0-tdxpreview-c38b622,\
 mode=rw,\
 size=11,\
@@ -121,27 +204,44 @@ type=pd-balanced \
   --confidential-compute-type=TDX
 ```
 
+### Post-deployment
+
+Once the instance is deploying and started you should be able to access it
+at the IP address of instance, you can find the IP address by going to the GCP
+Console and finding your instance.
+
 ## 🔜 Next Steps
 
-Once your instance is running, access the Chat UI via the instance's **public IP address**.
+Once your instance is running, access the Chat UI via the instance's public IP address.
 
 ### Example Interactions
 
-💬 **"Create an account for me"**  
-💬 **"Show me your remote attestation"**  
-💬 **"Transfer 10 C2FLR to 0x000000000000000000000000000000000000dEaD"**
+- **"Create an account for me"**
+- **"Show me your remote attestation"**
+- **"Transfer 10 C2FLR to 0x000000000000000000000000000000000000dEaD"**
 
-Enjoy secure AI-powered DeFi with **Flare AI DeFAI**! 🚀
+## Future Upgrades
 
-### 🔧 Troubleshooting
+- **TLS Communication:**  
+  Encrypt communications with a RA-TLS scheme for enhanced security.
 
-If you encounter issues:
+- **Expanded Flare Ecosystem Support:**
+  - Token swaps through [SparkDEX](http://sparkdex.ai)
+  - Borrow-lend via [Kinetic](https://linktr.ee/kinetic.market)
+  - Trading strategies with [RainDEX](https://www.rainlang.xyz)
 
-1. **Check logs**
+## 🔧 Troubleshooting
+
+If you encounter issues, try the following steps:
+
+1. **Check Logs:**
 
    ```bash
    gcloud compute instances get-serial-port-output defai-$TEAM_NAME --project=google-hackathon-project
    ```
 
-2. **Verify API Key** – Ensure `GEMINI_API_KEY` is correctly set.
-3. **Check Firewall** – Ensure your instance has public access.
+2. **Verify API Key:**  
+   Ensure the `GEMINI_API_KEY` environment variable is correctly set.
+
+3. **Check Firewall Settings:**  
+   Confirm that your instance is accessible publicly on port `80`.

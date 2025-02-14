@@ -3,6 +3,8 @@ import { Send } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import './index.css';
 
+const BACKEND_ROUTE = 'api/routes/chat/'
+
 const ChatInterface = () => {
   const [messages, setMessages] = useState([
     { 
@@ -26,7 +28,7 @@ const ChatInterface = () => {
 
   const handleSendMessage = async (text) => {
     try {
-      const response = await fetch('api/routes/chat/', {
+      const response = await fetch(BACKEND_ROUTE, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
