@@ -5,64 +5,63 @@ Flare AI Kit template for AI x DeFi (DeFAI).
 ## 🚀 Key Features
 
 - **Secure AI Execution**  
-  Runs within a Trusted Execution Environment (TEE) with remote attestation support for enhanced security.
+  Runs within a Trusted Execution Environment (TEE) featuring remote attestation support for robust security.
 
 - **Built-in Chat UI**  
-  Interact with your AI securely—the chat interface is served directly from the TEE.
+  Interact with your AI via a TEE-served chat interface.
 
-- **Flare Blockchain Integration**  
-  Enjoy native support for token operations on the Flare blockchain.
+- **Flare Blockchain and Wallet Integration**  
+  Perform token operations and generate wallets from within the TEE.
 
 - **Gemini 2.0 Support**  
-  Leverage Google Gemini with structured query support for advanced AI capabilities.
+  Utilize Google Gemini’s structured query support for advanced AI functionalities.
 
 <img width="500" alt="Artemis" src="https://github.com/user-attachments/assets/921fbfe2-9d52-496c-9b48-9dfc32a86208" />
 
-## 🏗️ Build Instructions
+## 🏗️ Build & Run Instructions
 
-You can build and run Flare AI DeFAI using Docker (recommended) or set up the backend and frontend manually.
+You can deploy Flare AI DeFAI using Docker (recommended) or set up the backend and frontend manually.
 
-### Setup .env
+### Environment Setup
 
-1. Rename `.env.example` to `env` and set all the variables.
+1. **Prepare the Environment File:**  
+   Rename `.env.example` to `.env` and update the variables accordingly.
+   > **Tip:** Set `SIMULATE_ATTESTATION=true` for local testing.
 
-2. Make sure `SIMULATE_ATTESTATION=true` for local testing
+### Build using Docker (Recommended)
 
-### With Docker (Recommended)
+The Docker setup mimics a TEE environment and includes an Nginx server for routing, while Supervisor manages both the backend and frontend services in a single container.
 
-The Docker build is optimized for local testing and mimics the TEE environment with minimal adjustments. It includes an Nginx server for routing and uses Supervisor to manage both backend and frontend services within a single container.
-
-1. **Build the Docker image:**
+1. **Build the Docker Image:**
 
    ```bash
    docker build -t flare-ai-defai .
    ```
 
-2. **Run the Docker container:**
+2. **Run the Docker Container:**
 
    ```bash
    docker run -p 80:80 -it --env-file .env flare-ai-defai
    ```
 
-3. **Open frontend in browser**
+3. **Access the Frontend:**  
+   Open your browser and navigate to [http://localhost:80](http://localhost:80) to interact with the Chat UI.
 
-   To open the frontend, navigate to [http://localhost:80](http://localhost:80)
+### Build manually
 
-### Manual Setup
-
-Flare AI DeFAI consists of a Python-based backend and a JavaScript frontend.
+Flare AI DeFAI is composed of a Python-based backend and a JavaScript frontend. Follow these steps for manual setup:
 
 #### Backend Setup
 
 1. **Install Dependencies:**  
-   Backend dependencies are managed using [uv](https://docs.astral.sh/uv/getting-started/installation/):
+   Use [uv](https://docs.astral.sh/uv/getting-started/installation/) to install backend dependencies:
 
    ```bash
    uv sync --all-extras
    ```
 
 2. **Start the Backend:**  
-   By default, the backend is served on `0.0.0.0:8080`.
+   The backend runs by default on `0.0.0.0:8080`:
 
    ```bash
    uv run start-backend
@@ -71,7 +70,7 @@ Flare AI DeFAI consists of a Python-based backend and a JavaScript frontend.
 #### Frontend Setup
 
 1. **Install Dependencies:**  
-   Navigate to the `chat-ui/` directory and install the necessary packages via [npm](https://nodejs.org/en/download):
+   In the `chat-ui/` directory, install the required packages using [npm](https://nodejs.org/en/download):
 
    ```bash
    cd chat-ui/
@@ -79,13 +78,13 @@ Flare AI DeFAI consists of a Python-based backend and a JavaScript frontend.
    ```
 
 2. **Configure the Frontend:**  
-   Modify `chat-ui/src/App.js` to update the backend URL during testing:
+   Update the backend URL in `chat-ui/src/App.js` for testing:
 
    ```js
    const BACKEND_ROUTE = "http://localhost:8080/api/routes/chat/";
    ```
 
-   **Note:** Remember to revert `BACKEND_ROUTE` back to `'api/routes/chat/'` after testing.
+   > **Note:** Remember to change `BACKEND_ROUTE` back to `'api/routes/chat/'` after testing.
 
 3. **Start the Frontend:**
 
@@ -95,60 +94,51 @@ Flare AI DeFAI consists of a Python-based backend and a JavaScript frontend.
 
 ## 🚀 Deploy on TEE
 
-Deploy Flare AI DeFAI on Confidential Compute Instances using either AMD SEV or Intel TDX.
+Deploy Flare AI DeFAI on a Confidential Space Instances (using AMD SEV or Intel TDX) to benefit from enhanced hardware-backed security.
 
-### 📌 Prerequisites
+### Prerequisites
 
 - **Google Cloud Platform Account:**  
-  Ensure you have access to the `verifiable-ai-hackathon`.
+  Access to the `verifiable-ai-hackathon` project is required.
 
 - **Gemini API Key:**  
-  Link your Gemini API key to the same project.
+  Ensure your [Gemini API key](https://aistudio.google.com/app/apikey) is linked to the project.
 
 - **gcloud CLI:**  
-  Install and authenticate the [gcloud CLI](https://cloud.google.com/sdk/docs/install) on your system.
+  Install and authenticate the [gcloud CLI](https://cloud.google.com/sdk/docs/install).
 
-### ⚙️ Environment Setup
+### Environment Configuration
 
-#### Step 1: Configure Environment Variables
+1. **Set Environment Variables:**  
+   Update your `.env` file with:
 
-Make sure the following variables are set in `.env`:
+   ```bash
+   TEE_IMAGE_REFERENCE=ghcr.io/flare-foundation/flare-ai-defai:main  # Replace with your repo build image
+   INSTANCE_NAME=<PROJECT_NAME-TEAM_NAME>
+   ```
 
-```bash
-TEE_IMAGE_REFERENCE=ghcr.io/flare-foundation/flare-ai-defai:main # set this your repo build image
-INSTANCE_NAME=<PROJECT_NAME-TEAM-_NAME
-```
+2. **Load Environment Variables:**
 
-#### Step 2: Apply the Configuration
+   ```bash
+   source .env
+   ```
 
-Add the environment variables to your current shell:
+   > **Reminder:** Run the above command in every new shell session.
 
-```bash
-source .env
-```
+3. **Verify the Setup:**
 
-**Note:** If you open a new shell you will need to run this command again.
+   ```bash
+   echo $TEE_IMAGE_REFERENCE
+   # Expected output: ghcr.io/flare-foundation/flare-ai-defai:main
+   ```
 
-#### Step 3: Verify the Setup
+### Deploying to Confidential Space
 
-Confirm that the environment variable is set correctly:
-
-```bash
-echo $TEE_IMAGE_REFERENCE
-# Expected output: ghcr.io/flare-foundation/flare-ai-defai:main
-```
-
-### Deploying on Confidential Space
-
-Choose your deployment option based on your hardware preference.
-
-#### 🔹 Option 1: AMD SEV (Recommended)
-
-Deploy on AMD Secure Encrypted Virtualization (SEV):
+For deployment on Confidential Space (AMD SEV):
 
 ```bash
 gcloud compute instances create $INSTANCE_NAME \
-  --project=verifiable-ai-hackathon \
+  --project=pacific-smile-435514-h4 \
   --zone=us-central1-c \
   --machine-type=n2d-standard-2 \
   --network-interface=network-tier=PREMIUM,nic-type=GVNIC,stack-type=IPV4_ONLY,subnet=default \
@@ -160,7 +150,7 @@ tee-env-WEB3_PROVIDER_URL=$WEB3_PROVIDER_URL,\
 tee-env-SIMULATE_ATTESTATION=false \
   --maintenance-policy=MIGRATE \
   --provisioning-model=STANDARD \
-  --service-account=confidential-sa@flare-network-sandbox.iam.gserviceaccount.com \
+  --service-account=magureanuhoria@pacific-smile-435514-h4.iam.gserviceaccount.com \
   --scopes=https://www.googleapis.com/auth/cloud-platform \
   --min-cpu-platform="AMD Milan" \
   --tags=flare-ai,http-server,https-server \
@@ -174,74 +164,48 @@ type=pd-standard \
   --shielded-secure-boot \
   --shielded-vtpm \
   --shielded-integrity-monitoring \
-  --labels=goog-ec-src=vm_add-gcloud \
   --reservation-affinity=any \
   --confidential-compute-type=SEV
 ```
 
-#### Option 2: Intel TDX
+#### Post-deployment
 
-Deploy on Intel Trust Domain Extensions (TDX):
+After deployment, you should see an output similar to:
 
-```bash
-gcloud compute instances create $INSTANCE_NAME \
-  --project=verifiable-ai-hackathon \
-  --machine-type=c3-standard-4 \
-  --maintenance-policy=TERMINATE \
-  --zone=us-central1-c \
-  --network-interface=network-tier=PREMIUM,nic-type=GVNIC,stack-type=IPV4_ONLY,subnet=default \
-  --metadata=tee-image-reference=$TEE_IMAGE_REFERENCE,\
-tee-container-log-redirect=true,\
-tee-env-GEMINI_API_KEY=$GEMINI_API_KEY,\
-tee-env-GEMINI_MODEL=gemini-1.5-flash,\
-tee-env-WEB3_PROVIDER_URL=$WEB3_PROVIDER_URL,\
-tee-env-SIMULATE_ATTESTATION=false \
-  --provisioning-model=STANDARD \
-  --service-account=confidential-sa@flare-network-sandbox.iam.gserviceaccount.com \
-  --scopes=https://www.googleapis.com/auth/cloud-platform \
-  --tags=flare-ai,http-server,https-server \
-  --create-disk=auto-delete=yes,\
-boot=yes,\
-device-name=$INSTANCE_NAME,\
-image=projects/confidential-space-images/global/images/confidential-space-debug-0-tdxpreview-c38b622,\
-mode=rw,\
-size=11,\
-type=pd-balanced \
-  --shielded-secure-boot \
-  --shielded-vtpm \
-  --shielded-integrity-monitoring \
-  --confidential-compute-type=TDX
+```plaintext
+NAME          ZONE           MACHINE_TYPE    PREEMPTIBLE  INTERNAL_IP  EXTERNAL_IP    STATUS
+defai-team1   us-central1-c  n2d-standard-2               10.128.0.18  34.41.127.200  RUNNING
 ```
 
-### Post-deployment
+It may take a few minutes for Confidential Space to complete startup checks. You can monitor progress via the GCP Console by clicking **Serial port 1 (console)**. When you see a message like:
 
-Once the instance is deploying and started you should be able to access it
-at the IP address of instance, you can find the IP address by going to the GCP
-Console and finding your instance.
+```plaintext
+INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
+```
+
+the container is ready. Navigate to the external IP to access the Chat UI.
 
 ## 🔜 Next Steps
 
-Once your instance is running, access the Chat UI via the instance's public IP address.
-
-### Example Interactions
+Once your instance is running, access the Chat UI using its public IP address. Here are some example interactions to try:
 
 - **"Create an account for me"**
-- **"Show me your remote attestation"**
 - **"Transfer 10 C2FLR to 0x000000000000000000000000000000000000dEaD"**
+- **"Show me your remote attestation"**
 
 ## Future Upgrades
 
 - **TLS Communication:**  
-  Encrypt communications with a RA-TLS scheme for enhanced security.
+  Implement RA-TLS for encrypted communication.
 
 - **Expanded Flare Ecosystem Support:**
-  - Token swaps through [SparkDEX](http://sparkdex.ai)
-  - Borrow-lend via [Kinetic](https://linktr.ee/kinetic.market)
-  - Trading strategies with [RainDEX](https://www.rainlang.xyz)
+  - **Token Swaps:** via [SparkDEX](http://sparkdex.ai)
+  - **Borrow-Lend:** via [Kinetic](https://linktr.ee/kinetic.market)
+  - **Trading Strategies:** via [RainDEX](https://www.rainlang.xyz)
 
 ## 🔧 Troubleshooting
 
-If you encounter issues, try the following steps:
+If you encounter issues, follow these steps:
 
 1. **Check Logs:**
 
@@ -250,7 +214,7 @@ If you encounter issues, try the following steps:
    ```
 
 2. **Verify API Key:**  
-   Ensure the `GEMINI_API_KEY` environment variable is correctly set.
+   Ensure that the `GEMINI_API_KEY` environment variable is set correctly.
 
 3. **Check Firewall Settings:**  
-   Confirm that your instance is accessible publicly on port `80`.
+   Confirm that your instance is publicly accessible on port `80`.
