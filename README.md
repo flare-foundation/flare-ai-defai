@@ -14,7 +14,7 @@ Flare AI Kit template for AI x DeFi (DeFAI).
   Perform token operations and generate wallets from within the TEE.
 
 - **Gemini 2.0 Support**  
-  Utilize Google Gemini’s structured query support for advanced AI functionalities.
+  Utilize Google Gemini’s latest model with structured query support for advanced AI functionalities.
 
 <img width="500" alt="Artemis" src="https://github.com/user-attachments/assets/921fbfe2-9d52-496c-9b48-9dfc32a86208" />
 
@@ -177,7 +177,8 @@ NAME          ZONE           MACHINE_TYPE    PREEMPTIBLE  INTERNAL_IP  EXTERNAL_
 defai-team1   us-central1-c  n2d-standard-2               10.128.0.18  34.41.127.200  RUNNING
 ```
 
-It may take a few minutes for Confidential Space to complete startup checks. You can monitor progress via the GCP Console by clicking **Serial port 1 (console)**. When you see a message like:
+It may take a few minutes for Confidential Space to complete startup checks.
+You can monitor progress via the [GCP Console](https://console.cloud.google.com/welcome?project=verifiable-ai-hackathon) by clicking **Serial port 1 (console)**. When you see a message like:
 
 ```plaintext
 INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
