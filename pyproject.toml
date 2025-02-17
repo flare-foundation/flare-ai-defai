@@ -44,9 +44,6 @@ ui = [
     "uvicorn>=0.34.0",
 ]
 
-[tool.uv]
-default-groups = ["dev", "validate", "onchain", "ui"]
-
 [tool.ruff]
 target-version = "py312"
 
