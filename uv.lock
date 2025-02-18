@@ -489,13 +489,17 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "aiohttp" },
+    { name = "cryptography" },
+    { name = "fastapi" },
     { name = "google-generativeai" },
     { name = "httpx" },
     { name = "pydantic-settings" },
-    { name = "python-dotenv" },
+    { name = "pyjwt" },
+    { name = "pyopenssl" },
     { name = "requests" },
-    { name = "requests-unixsocket" },
     { name = "structlog" },
+    { name = "uvicorn" },
+    { name = "web3" },
 ]
 
 [package.dev-dependencies]
@@ -504,29 +508,21 @@ dev = [
     { name = "pytest" },
     { name = "ruff" },
 ]
-onchain = [
-    { name = "web3" },
-]
-ui = [
-    { name = "fastapi" },
-    { name = "uvicorn" },
-]
-validate = [
-    { name = "cryptography" },
-    { name = "pyjwt" },
-    { name = "pyopenssl" },
-]
 
 [package.metadata]
 requires-dist = [
     { name = "aiohttp", specifier = ">=3.11.11" },
+    { name = "cryptography", specifier = ">=44.0.1" },
+    { name = "fastapi", specifier = ">=0.115.8" },
     { name = "google-generativeai", specifier = ">=0.8.3" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "pydantic-settings", specifier = ">=2.7.1" },
-    { name = "python-dotenv", specifier = ">=1.0.1" },
+    { name = "pyjwt", specifier = ">=2.10.1" },
+    { name = "pyopenssl", specifier = ">=25.0.0" },
     { name = "requests", specifier = ">=2.32.3" },
-    { name = "requests-unixsocket", specifier = ">=0.3.0" },
     { name = "structlog", specifier = ">=25.1.0" },
+    { name = "uvicorn", specifier = ">=0.34.0" },
+    { name = "web3", specifier = ">=7.8.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -534,16 +530,6 @@ dev = [
     { name = "pyright", specifier = ">=1.1.391" },
     { name = "pytest", specifier = ">=8.3.4" },
     { name = "ruff", specifier = ">=0.9.1" },
-]
-onchain = [{ name = "web3", specifier = ">=7.7.0" }]
-ui = [
-    { name = "fastapi", specifier = ">=0.115.6" },
-    { name = "uvicorn", specifier = ">=0.34.0" },
-]
-validate = [
-    { name = "cryptography", specifier = ">=44.0.0" },
-    { name = "pyjwt", specifier = ">=2.10.1" },
-    { name = "pyopenssl", specifier = ">=25.0.0" },
 ]
 
 [[package]]
@@ -1211,18 +1197,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/63/70/2bf7780ad2d390a8d301ad0b550f1581eadbd9a20f896afe06353c2a2913/requests-2.32.3.tar.gz", hash = "sha256:55365417734eb18255590a9ff9eb97e9e1da868d4ccd6402399eaf68af20a760", size = 131218 }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/f9/9b/335f9764261e915ed497fcdeb11df5dfd6f7bf257d4a6a2a686d80da4d54/requests-2.32.3-py3-none-any.whl", hash = "sha256:70761cfe03c773ceb22aa2f671b4757976145175cdfca038c02654d061d6dcc6", size = 64928 },
-]
-
-[[package]]
-name = "requests-unixsocket"
-version = "0.3.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "requests" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/c3/ea/0fb87f844d8a35ff0dcc8b941e1a9ffc9eb46588ac9e4267b9d9804354eb/requests-unixsocket-0.3.0.tar.gz", hash = "sha256:28304283ea9357d45fff58ad5b11e47708cfbf5806817aa59b2a363228ee971e", size = 14478 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/b3/63/e9e81d5e7370d46f08407c37399b507725125587b01fff46b4da5ddd3a4a/requests_unixsocket-0.3.0-py2.py3-none-any.whl", hash = "sha256:c685c680f0809e1b2955339b1e5afc3c0022b3066f4f7eb343f43a6065fc0e5d", size = 11835 },
 ]
 
 [[package]]
