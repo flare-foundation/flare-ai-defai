@@ -10,12 +10,23 @@ requires-python = ">=3.12"
 dependencies = [
     "aiohttp>=3.11.11",
     "pydantic-settings>=2.7.1",
-    "python-dotenv>=1.0.1",
     "requests>=2.32.3",
-    "requests-unixsocket>=0.3.0",
     "structlog>=25.1.0",
     "google-generativeai>=0.8.3",
     "httpx>=0.28.1",
+    "cryptography>=44.0.1",
+    "pyjwt>=2.10.1",
+    "pyopenssl>=25.0.0",
+    "fastapi>=0.115.8",
+    "uvicorn>=0.34.0",
+    "web3>=7.8.0",
+]
+
+[dependency-groups]
+dev = [
+    "pyright>=1.1.391",
+    "pytest>=8.3.4",
+    "ruff>=0.9.1",
 ]
 
 [project.scripts]
@@ -24,25 +35,6 @@ start-backend = "flare_ai_defai.main:start"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
-
-[dependency-groups]
-dev = [
-    "pyright>=1.1.391",
-    "pytest>=8.3.4",
-    "ruff>=0.9.1",
-]
-validate = [
-    "cryptography>=44.0.0",
-    "pyjwt>=2.10.1",
-    "pyopenssl>=25.0.0",
-]
-onchain = [
-    "web3>=7.7.0",
-]
-ui = [
-    "fastapi>=0.115.6",
-    "uvicorn>=0.34.0",
-]
 
 [tool.ruff]
 target-version = "py312"
