@@ -18,6 +18,26 @@ Flare AI Kit template for AI x DeFi (DeFAI).
 
 <img width="500" alt="Artemis" src="https://github.com/user-attachments/assets/921fbfe2-9d52-496c-9b48-9dfc32a86208" />
 
+## 🏗️ Repository Structure
+
+```plaintext
+src/flare_ai_defai/
+├── ai/                     # AI Provider implementations
+│   ├── base.py            # Base AI provider interface
+│   ├── gemini.py          # Google Gemini integration
+│   └── openrouter.py      # OpenRouter integration
+├── api/                    # API layer
+│   ├── middleware/        # Request/response middleware
+│   └── routes/           # API endpoint definitions
+├── attestation/           # TEE attestation
+│   ├── vtpm_attestation.py   # vTPM client
+│   └── vtpm_validation.py    # Token validation
+├── blockchain/            # Blockchain operations
+│   ├── explorer.py        # Chain explorer client
+│   └── flare.py          # Flare network provider
+└── prompts/              # AI system prompts & templates
+```
+
 ## 🏗️ Build & Run Instructions
 
 You can deploy Flare AI DeFAI using Docker (recommended) or set up the backend and frontend manually.
@@ -138,7 +158,7 @@ For deployment on Confidential Space (AMD SEV):
 
 ```bash
 gcloud compute instances create $INSTANCE_NAME \
-  --project=pacific-smile-435514-h4 \
+  --project=verifiable-ai-hackathon \
   --zone=us-central1-c \
   --machine-type=n2d-standard-2 \
   --network-interface=network-tier=PREMIUM,nic-type=GVNIC,stack-type=IPV4_ONLY,subnet=default \
@@ -150,7 +170,7 @@ tee-env-WEB3_PROVIDER_URL=$WEB3_PROVIDER_URL,\
 tee-env-SIMULATE_ATTESTATION=false \
   --maintenance-policy=MIGRATE \
   --provisioning-model=STANDARD \
-  --service-account=magureanuhoria@pacific-smile-435514-h4.iam.gserviceaccount.com \
+  --service-account=confidential-sa@verifiable-ai-hackathon.iam.gserviceaccount.com \
   --scopes=https://www.googleapis.com/auth/cloud-platform \
   --min-cpu-platform="AMD Milan" \
   --tags=flare-ai,http-server,https-server \
@@ -219,3 +239,97 @@ If you encounter issues, follow these steps:
 
 3. **Check Firewall Settings:**  
    Confirm that your instance is publicly accessible on port `80`.
+
+## 🔑 Key Components
+
+The following scripts are the crucial parts of this template and provide a strong base for building and customizing your autonomous AI agent. You can tweak these components to extend functionality, integrate additional features, or adapt them to your project's specific needs.
+
+### Blockchain Integration (`blockchain/`)
+
+This module handles interactions with the Flare blockchain. The `FlareProvider` class abstracts operations such as wallet creation, transaction construction, and secure transaction submission.
+
+```python
+from flare_ai_defai.blockchain import FlareProvider
+
+# Initialize provider
+provider = FlareProvider(web3_provider_url="https://flare-api.example")
+
+# Generate a new wallet address
+address = provider.generate_account()
+print("New wallet address:", address)
+
+# Create a token transfer transaction
+tx = provider.create_send_flr_tx(
+    to_address="0xRecipientAddress",
+    amount=1.5
+)
+
+# Sign and send the transaction
+tx_hash = provider.sign_and_send_transaction(tx)
+print("Transaction Hash:", tx_hash)
+```
+
+### AI Integration (`ai/`)
+
+The AI integration layer allows you to interact with various AI providers through a unified interface. The architecture is modular enough to support alternative providers.
+
+```python
+from flare_ai_defai.ai import GeminiProvider
+
+# Initialize the AI provider with required credentials and model settings
+ai = GeminiProvider(
+    api_key="YOUR_API_KEY",
+    model="gemini-pro"
+)
+
+# Generate a response from the AI based on your prompt
+response = ai.send_message("Explain Flare's FAssets")
+print("AI Response:", response.text)
+```
+
+### TEE Attestation (`attestation/`)
+
+The attestation module ensures that critical operations run securely within a Trusted Execution Environment.
+
+```python
+from flare_ai_defai.attestation import Vtpm, VtpmValidation
+
+# Obtain an attestation token from the TEE
+vtpm = Vtpm()
+token = vtpm.get_token(nonces=["random_nonce"])
+print("Attestation Token:", token)
+
+# Validate the attestation token to ensure secure execution
+validator = VtpmValidation()
+claims = validator.validate_token(token)
+print("Token Claims:", claims)
+```
+
+## 💡 Example Use Cases & Project Ideas
+
+Below are several detailed project ideas demonstrating how the template can be used to build autonomous AI agents for Flare's DeFi ecosystem:
+
+### NLP interface for Flare ecosystem
+
+Implement a natural language command parser that translates user intent into specific protocol actions, e.g.:
+
+```plaintext
+"Swap 100 FLR to USDC and deposit as collateral on Kinetic" →
+{
+  action: ["swap", "deposit"],
+  protocols: ["SparkDEX", "Kinetic"],
+  amounts: [100],
+  tokens: ["FLR", "USDC"]
+}
+```
+
+- Add cross-protocol optimization features:
+
+  - Automatic route splitting across DEXs for better prices
+  - Gas optimization by batching multiple transactions
+  - Yield optimization by comparing lending rates across protocols
+
+- Automated token swaps and integrations with Flare ecosystem applications:
+  - [SparkDEX](http://sparkdex.ai/): Token swaps + Perpetual futures
+  - [Kinetic](http://kinetic.market/): Borrow-lend protocol
+  - [RainDEX](http://rainlang.xyz): Trading strategies
