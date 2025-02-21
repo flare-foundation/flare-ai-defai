@@ -114,7 +114,7 @@ Flare AI DeFAI is composed of a Python-based backend and a JavaScript frontend. 
 
 ## 🚀 Deploy on TEE
 
-Deploy Flare AI DeFAI on a Confidential Space Instances (using AMD SEV or Intel TDX) to benefit from enhanced hardware-backed security.
+Deploy on a [Confidential Space](https://cloud.google.com/confidential-computing/confidential-space/docs/confidential-space-overview) using AMD SEV.
 
 ### Prerequisites
 
@@ -148,13 +148,12 @@ Deploy Flare AI DeFAI on a Confidential Space Instances (using AMD SEV or Intel 
 3. **Verify the Setup:**
 
    ```bash
-   echo $TEE_IMAGE_REFERENCE
-   # Expected output: ghcr.io/flare-foundation/flare-ai-defai:main
+   echo $TEE_IMAGE_REFERENCE # Expected output: Your repo build image
    ```
 
 ### Deploying to Confidential Space
 
-For deployment on Confidential Space (AMD SEV TEE):
+Run the following command:
 
 ```bash
 gcloud compute instances create $INSTANCE_NAME \
