@@ -18,27 +18,8 @@ Flare AI Kit template for AI x DeFi (DeFAI).
 
 <img width="500" alt="Artemis" src="https://github.com/user-attachments/assets/921fbfe2-9d52-496c-9b48-9dfc32a86208" />
 
-## 🏗️ Repository Structure
 
-```plaintext
-src/flare_ai_defai/
-├── ai/                     # AI Provider implementations
-│   ├── base.py            # Base AI provider interface
-│   ├── gemini.py          # Google Gemini integration
-│   └── openrouter.py      # OpenRouter integration
-├── api/                    # API layer
-│   ├── middleware/        # Request/response middleware
-│   └── routes/           # API endpoint definitions
-├── attestation/           # TEE attestation
-│   ├── vtpm_attestation.py   # vTPM client
-│   └── vtpm_validation.py    # Token validation
-├── blockchain/            # Blockchain operations
-│   ├── explorer.py        # Chain explorer client
-│   └── flare.py          # Flare network provider
-└── prompts/              # AI system prompts & templates
-```
-
-## 🏗️ Build & Run Instructions
+## 🎯 Getting Started
 
 You can deploy Flare AI DeFAI using Docker (recommended) or set up the backend and frontend manually.
 
@@ -67,7 +48,7 @@ The Docker setup mimics a TEE environment and includes an Nginx server for routi
 3. **Access the Frontend:**  
    Open your browser and navigate to [http://localhost:80](http://localhost:80) to interact with the Chat UI.
 
-### Build manually
+## 🛠 Build Manually
 
 Flare AI DeFAI is composed of a Python-based backend and a JavaScript frontend. Follow these steps for manual setup:
 
@@ -111,6 +92,25 @@ Flare AI DeFAI is composed of a Python-based backend and a JavaScript frontend. 
    ```bash
    npm start
    ```
+## 📁 Repo Structure
+
+```plaintext
+src/flare_ai_defai/
+├── ai/                     # AI Provider implementations
+│   ├── base.py            # Base AI provider interface
+│   ├── gemini.py          # Google Gemini integration
+│   └── openrouter.py      # OpenRouter integration
+├── api/                    # API layer
+│   ├── middleware/        # Request/response middleware
+│   └── routes/           # API endpoint definitions
+├── attestation/           # TEE attestation
+│   ├── vtpm_attestation.py   # vTPM client
+│   └── vtpm_validation.py    # Token validation
+├── blockchain/            # Blockchain operations
+│   ├── explorer.py        # Chain explorer client
+│   └── flare.py          # Flare network provider
+└── prompts/              # AI system prompts & templates
+```
 
 ## 🚀 Deploy on TEE
 
@@ -222,7 +222,7 @@ If you encounter issues, follow these steps:
 3. **Check Firewall Settings:**  
    Confirm that your instance is publicly accessible on port `80`.
 
-## 🔜 Next Steps
+## 💡 Next Steps
 
 Once your instance is running, access the Chat UI using its public IP address. Here are some example interactions to try:
 
@@ -230,7 +230,7 @@ Once your instance is running, access the Chat UI using its public IP address. H
 - **"Transfer 10 C2FLR to 0x000000000000000000000000000000000000dEaD"**
 - **"Show me your remote attestation"**
 
-## Future Upgrades
+### Future Upgrades
 
 - **TLS Communication:**  
   Implement RA-TLS for encrypted communication.
@@ -240,11 +240,11 @@ Once your instance is running, access the Chat UI using its public IP address. H
   - **Borrow-Lend:** via [Kinetic](https://linktr.ee/kinetic.market)
   - **Trading Strategies:** via [RainDEX](https://www.rainlang.xyz)
 
-## 💡 Example Use Cases & Project Ideas
+### Example Use Cases & Project Ideas
 
 Below are several detailed project ideas demonstrating how the template can be used to build autonomous AI agents for Flare's DeFi ecosystem:
 
-### NLP interface for Flare ecosystem
+#### NLP interface for Flare ecosystem
 
 Implement a natural language command parser that translates user intent into specific protocol actions, e.g.:
 
