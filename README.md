@@ -198,7 +198,7 @@ defai-team1   us-central1-c  n2d-standard-2               10.128.0.18  34.41.127
 ```
 
 It may take a few minutes for Confidential Space to complete startup checks.
-You can monitor progress via the [GCP Console](https://console.cloud.google.com/welcome?project=verifiable-ai-hackathon) by clicking **Serial port 1 (console)**. 
+You can monitor progress via the [GCP Console](https://console.cloud.google.com/welcome?project=verifiable-ai-hackathon) by clicking **Serial port 1 (console)**.
 When you see a message like:
 
 ```plaintext
