@@ -154,7 +154,7 @@ Deploy Flare AI DeFAI on a Confidential Space Instances (using AMD SEV or Intel 
 
 ### Deploying to Confidential Space
 
-For deployment on Confidential Space (AMD SEV):
+For deployment on Confidential Space (AMD SEV TEE):
 
 ```bash
 gcloud compute instances create $INSTANCE_NAME \
@@ -198,13 +198,30 @@ defai-team1   us-central1-c  n2d-standard-2               10.128.0.18  34.41.127
 ```
 
 It may take a few minutes for Confidential Space to complete startup checks.
-You can monitor progress via the [GCP Console](https://console.cloud.google.com/welcome?project=verifiable-ai-hackathon) by clicking **Serial port 1 (console)**. When you see a message like:
+You can monitor progress via the [GCP Console](https://console.cloud.google.com/welcome?project=verifiable-ai-hackathon) by clicking **Serial port 1 (console)**. 
+When you see a message like:
 
 ```plaintext
 INFO:     Uvicorn running on http://0.0.0.0:8080 (Press CTRL+C to quit)
 ```
 
-the container is ready. Navigate to the external IP to access the Chat UI.
+the container is ready. Navigate to the external IP of the instance (visible in the GCP Console) to access the Chat UI.
+
+### 🔧 Troubleshooting
+
+If you encounter issues, follow these steps:
+
+1. **Check Logs:**
+
+   ```bash
+   gcloud compute instances get-serial-port-output $INSTANCE_NAME --project=verifiable-ai-hackathon
+   ```
+
+2. **Verify API Key(s):**  
+   Ensure that all API Keys are set correctly (e.g. `GEMINI_API_KEY`).
+
+3. **Check Firewall Settings:**  
+   Confirm that your instance is publicly accessible on port `80`.
 
 ## 🔜 Next Steps
 
@@ -223,87 +240,6 @@ Once your instance is running, access the Chat UI using its public IP address. H
   - **Token Swaps:** via [SparkDEX](http://sparkdex.ai)
   - **Borrow-Lend:** via [Kinetic](https://linktr.ee/kinetic.market)
   - **Trading Strategies:** via [RainDEX](https://www.rainlang.xyz)
-
-## 🔧 Troubleshooting
-
-If you encounter issues, follow these steps:
-
-1. **Check Logs:**
-
-   ```bash
-   gcloud compute instances get-serial-port-output defai-$TEAM_NAME --project=google-hackathon-project
-   ```
-
-2. **Verify API Key:**  
-   Ensure that the `GEMINI_API_KEY` environment variable is set correctly.
-
-3. **Check Firewall Settings:**  
-   Confirm that your instance is publicly accessible on port `80`.
-
-## 🔑 Key Components
-
-The following scripts are the crucial parts of this template and provide a strong base for building and customizing your autonomous AI agent. You can tweak these components to extend functionality, integrate additional features, or adapt them to your project's specific needs.
-
-### Blockchain Integration (`blockchain/`)
-
-This module handles interactions with the Flare blockchain. The `FlareProvider` class abstracts operations such as wallet creation, transaction construction, and secure transaction submission.
-
-```python
-from flare_ai_defai.blockchain import FlareProvider
-
-# Initialize provider
-provider = FlareProvider(web3_provider_url="https://flare-api.example")
-
-# Generate a new wallet address
-address = provider.generate_account()
-print("New wallet address:", address)
-
-# Create a token transfer transaction
-tx = provider.create_send_flr_tx(
-    to_address="0xRecipientAddress",
-    amount=1.5
-)
-
-# Sign and send the transaction
-tx_hash = provider.sign_and_send_transaction(tx)
-print("Transaction Hash:", tx_hash)
-```
-
-### AI Integration (`ai/`)
-
-The AI integration layer allows you to interact with various AI providers through a unified interface. The architecture is modular enough to support alternative providers.
-
-```python
-from flare_ai_defai.ai import GeminiProvider
-
-# Initialize the AI provider with required credentials and model settings
-ai = GeminiProvider(
-    api_key="YOUR_API_KEY",
-    model="gemini-pro"
-)
-
-# Generate a response from the AI based on your prompt
-response = ai.send_message("Explain Flare's FAssets")
-print("AI Response:", response.text)
-```
-
-### TEE Attestation (`attestation/`)
-
-The attestation module ensures that critical operations run securely within a Trusted Execution Environment.
-
-```python
-from flare_ai_defai.attestation import Vtpm, VtpmValidation
-
-# Obtain an attestation token from the TEE
-vtpm = Vtpm()
-token = vtpm.get_token(nonces=["random_nonce"])
-print("Attestation Token:", token)
-
-# Validate the attestation token to ensure secure execution
-validator = VtpmValidation()
-claims = validator.validate_token(token)
-print("Token Claims:", claims)
-```
 
 ## 💡 Example Use Cases & Project Ideas
 
