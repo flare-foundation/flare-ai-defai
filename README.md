@@ -18,7 +18,6 @@ Flare AI Kit template for AI x DeFi (DeFAI).
 
 <img width="500" alt="Artemis" src="https://github.com/user-attachments/assets/921fbfe2-9d52-496c-9b48-9dfc32a86208" />
 
-
 ## 🎯 Getting Started
 
 You can deploy Flare AI DeFAI using Docker (recommended) or set up the backend and frontend manually.
@@ -92,6 +91,7 @@ Flare AI DeFAI is composed of a Python-based backend and a JavaScript frontend. 
    ```bash
    npm start
    ```
+
 ## 📁 Repo Structure
 
 ```plaintext
@@ -106,10 +106,17 @@ src/flare_ai_defai/
 ├── attestation/           # TEE attestation
 │   ├── vtpm_attestation.py   # vTPM client
 │   └── vtpm_validation.py    # Token validation
-├── blockchain/            # Blockchain operations
+├── blockchain/              # Blockchain operations
 │   ├── explorer.py        # Chain explorer client
 │   └── flare.py          # Flare network provider
-└── prompts/              # AI system prompts & templates
+├── prompts/              # AI system prompts & templates
+│    ├── library.py        # Prompt module library
+│    ├── schemas.py        # Schema definitions
+│    ├── service.py        # Prompt service module
+│    └── templates.py       # Prompt templates
+├── exceptions.py      # Custom errors
+├── main.py          # Primary entrypoint
+└── settings.py       # Configuration settings error
 ```
 
 ## 🚀 Deploy on TEE
