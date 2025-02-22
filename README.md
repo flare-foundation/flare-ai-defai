@@ -275,3 +275,16 @@ Implement a natural language command parser that translates user intent into spe
   - [SparkDEX](http://sparkdex.ai/): Token swaps + Perpetual futures
   - [Kinetic](http://kinetic.market/): Borrow-lend protocol
   - [RainDEX](http://rainlang.xyz): Trading strategies
+  - [Cycle](https://cyclo.finance): Liquidation-free leverage
+
+### RAG Knowledge
+
+Connect the DeFAI agent with the RAG from [`flare-ai-rag`](https://github.com/flare-foundation/flare-ai-rag) trained on datasets such as:
+
+- [Flare Developer Hub](https://dev.flare.network)
+- [Flare Website](https://flare.network)
+- [Flare X](https://x.com/FlareNetworks)
+
+### Transaction simulation
+
+Use a transaction simulation framework such as [Tenderly Simulator](https://tenderly.co/transaction-simulator) to show users the expected outcome of their transaction.
