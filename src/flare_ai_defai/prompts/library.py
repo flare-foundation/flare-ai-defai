@@ -1,8 +1,8 @@
 """
-Prompt Library Module for Flare AI Core
+Prompt Library Module for Flare AI DeFAI
 
 This module provides a centralized management system for AI prompts used throughout
-the Flare AI Core application. It handles the organization, storage, and retrieval
+the Flare AI DeFAI application. It handles the organization, storage, and retrieval
 of various prompt templates used for different operations like token transactions,
 account generation, and user interactions.
 
@@ -41,7 +41,7 @@ logger = structlog.get_logger(__name__)
 
 class PromptLibrary:
     """
-    A library for managing and organizing AI prompts used in the Flare AI Core.
+    A library for managing and organizing AI prompts used in the Flare AI DeFAI.
 
     This class serves as a central repository for all prompt templates used in
     the application. It provides functionality to add, retrieve, and categorize

@@ -1,5 +1,5 @@
 """
-Prompt Service Module for Flare AI Core
+Prompt Service Module for Flare AI DeFAI
 
 This module provides a service layer for managing and formatting AI prompts.
 It acts as a wrapper around the PromptLibrary, adding error handling and

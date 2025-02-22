@@ -1,8 +1,8 @@
 """
-Schema Definitions for Flare AI Core Prompts
+Schema Definitions for Flare AI DeFAI Prompts
 
 This module defines the core data structures and types used for managing prompts
-and their responses in the Flare AI Core system. It includes enums for semantic
+and their responses in the Flare AI DeFAI system. It includes enums for semantic
 routing, type definitions for token operations, and a dataclass for prompt
 templates.
 
