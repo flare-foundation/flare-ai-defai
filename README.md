@@ -214,7 +214,6 @@ type=pd-standard \
 
    the container is ready. Navigate to the external IP of the instance (visible in the **VM Instances** page) to access the Chat UI.
 
-
 ### 🔧 Troubleshooting
 
 If you encounter issues, follow these steps:
