@@ -110,7 +110,7 @@ const ChatInterface = () => {
         {/* Header */}
         <div className="bg-pink-600 text-white p-4">
           <h1 className="text-xl font-bold">Artemis</h1>
-          <p className="text-sm opacity-80">DeFAI Copilot for Flare</p>
+          <p className="text-sm opacity-80">DeFAI Copilot for Flare (gemini-2.0-flash)</p>
         </div>
 
         {/* Messages container */}

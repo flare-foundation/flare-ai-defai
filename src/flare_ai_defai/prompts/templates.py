@@ -50,6 +50,8 @@ Generate a welcoming message that includes ALL of these elements in order:
 3. Account address display:
    - EXACTLY as provided, make no changes: ${address}
    - Format with clear visual separation
+4. Funding account instructions:
+   - Tell the user to fund the new account: [Add funds to account](https://faucet.flare.network/coston2)
 
 Important rules:
 - DO NOT modify the address in any way
@@ -62,6 +64,7 @@ Example tone:
 "Welcome to Flare! 🎉 Your new account is secured by secure hardware (TEE),
 keeping your private keys safe and secure, you freely share your
 public address: 0x123...
+[Add funds to account](https://faucet.flare.network/coston2)
 Ready to start exploring the Flare network?"
 """
 
